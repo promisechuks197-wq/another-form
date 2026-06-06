@@ -282,12 +282,16 @@
       align-items: center;
     }
 
-    .input-wrapper svg.field-icon {
+    .input-wrapper svg.field-icon,
+    .select-wrap svg.field-icon {
       position: absolute;
       left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
       stroke: var(--muted);
       pointer-events: none;
       transition: var(--transition);
+      z-index: 1;
     }
 
     input[type="text"],
@@ -322,7 +326,9 @@
     }
 
     input[type="text"]:focus + svg.field-icon,
-    .has-icon select:focus ~ svg.field-icon {
+    .has-icon select:focus ~ svg.field-icon,
+    .has-icon input:focus ~ svg.field-icon,
+    .select-wrap:focus-within svg.field-icon {
       stroke: var(--accent);
     }
 
@@ -353,6 +359,31 @@
 
     .form-group.has-error .error-msg {
       display: flex;
+    }
+
+    /* Time group (hours / minutes / seconds) */
+    .time-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.8rem;
+    }
+
+    .time-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .time-field label {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+
+    .time-field .number-wrap input[type="number"] {
+      padding-right: 2rem;
     }
 
     /* Number stepper */
@@ -426,6 +457,7 @@
       pointer-events: none;
       font-size: 0.95rem;
       transition: var(--transition);
+      z-index: 1;
     }
 
     .select-wrap:focus-within::after {
@@ -1108,6 +1140,275 @@
       }
     }
 
+    /* ==================== MOBILE COMPACT RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem 0.8rem;
+      }
+      .nav-container {
+        padding: 0.8rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+      .logo-mark {
+        font-size: 1.2rem;
+      }
+      .logo-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+      }
+      .nav-tab-btn {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.72rem;
+      }
+      .nav-tab-btn svg {
+        display: none;
+      }
+      .view-header {
+        margin-bottom: 1.5rem;
+      }
+      .view-header h1 {
+        font-size: 1.6rem;
+      }
+      .view-header p {
+        font-size: 0.85rem;
+      }
+      .glass-card {
+        padding: 1.2rem;
+        border-radius: 14px;
+      }
+      .form-group {
+        margin-bottom: 1.2rem;
+      }
+      input[type="text"],
+      input[type="number"],
+      input[type="email"],
+      input[type="password"],
+      select {
+        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+      }
+      .has-icon input[type="text"],
+      .has-icon input[type="email"],
+      .has-icon input[type="password"],
+      .has-icon select {
+        padding-left: 2.5rem;
+      }
+      .input-wrapper svg.field-icon {
+        left: 0.85rem;
+        width: 14px;
+        height: 14px;
+      }
+      .time-group {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.5rem;
+      }
+      .time-field label {
+        font-size: 0.62rem;
+        margin-bottom: 0.3rem;
+      }
+      .time-field .number-wrap input[type="number"] {
+        padding-right: 1.6rem;
+        font-size: 0.85rem;
+        padding: 0.7rem 0.6rem;
+      }
+      .number-btns {
+        width: 1.6rem;
+      }
+      .upload-area {
+        padding: 1.4rem 1rem;
+      }
+      .upload-icon {
+        width: 38px;
+        height: 38px;
+        margin-bottom: 0.5rem;
+      }
+      .upload-area .title {
+        font-size: 0.85rem;
+      }
+      .upload-area .sub {
+        font-size: 0.7rem;
+      }
+      .divider {
+        margin: 1.2rem 0;
+      }
+      .btn-submit {
+        padding: 0.9rem;
+        font-size: 0.85rem;
+      }
+      .auth-wrapper {
+        margin: 1.5rem auto;
+      }
+      .auth-header h2 {
+        font-size: 1.4rem;
+      }
+      .auth-header svg {
+        width: 26px;
+        height: 26px;
+      }
+      .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.8rem;
+      }
+      .admin-title-wrap h2 {
+        font-size: 1.4rem;
+      }
+      .admin-title-wrap p {
+        font-size: 0.78rem;
+      }
+      .admin-action-row {
+        width: 100%;
+      }
+      .btn-logout {
+        width: 100%;
+        justify-content: center;
+      }
+      .kpi-card {
+        padding: 1rem;
+        min-height: 90px;
+      }
+      .kpi-card .val {
+        font-size: 1.5rem;
+      }
+      .kpi-card .label {
+        font-size: 0.65rem;
+      }
+      .kpi-icon-bg svg {
+        width: 42px;
+        height: 42px;
+      }
+      .chart-card {
+        padding: 1.2rem;
+        border-radius: 12px;
+      }
+      .chart-card h3 {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+      }
+      .chart-card h3 svg {
+        width: 14px;
+        height: 14px;
+      }
+      .bar-row {
+        grid-template-columns: 60px 1fr 35px;
+        gap: 0.6rem;
+      }
+      .bar-label {
+        font-size: 0.7rem;
+      }
+      .bar-value {
+        font-size: 0.7rem;
+      }
+      .toolbar-card {
+        padding: 1rem;
+      }
+      .toolbar-flex {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-filter-group {
+        width: 100%;
+      }
+      .search-input-wrap,
+      .filter-select-wrap {
+        max-width: 100%;
+      }
+      .toolbar-actions {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+      .btn-action {
+        flex: 1;
+        justify-content: center;
+        font-size: 0.78rem;
+        padding: 0.55rem 0.8rem;
+      }
+      .btn-action svg {
+        display: none;
+      }
+      .profile-card {
+        padding: 1rem;
+      }
+      .card-avatar,
+      .card-initials-avatar {
+        width: 42px;
+        height: 42px;
+        font-size: 0.85rem;
+      }
+      .card-name {
+        font-size: 0.88rem;
+      }
+      .card-country {
+        font-size: 0.72rem;
+      }
+      .hours-badge {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.5rem;
+      }
+      .card-date {
+        font-size: 0.68rem;
+      }
+      .icon-btn {
+        width: 28px;
+        height: 28px;
+      }
+      .icon-btn svg {
+        width: 12px;
+        height: 12px;
+      }
+      .pagination-bar {
+        flex-direction: column;
+        gap: 0.6rem;
+        padding: 0.8rem 1rem;
+        text-align: center;
+      }
+      .modal-card {
+        max-height: 95vh;
+        border-radius: 14px;
+      }
+      .modal-header {
+        padding: 1rem 1.2rem;
+      }
+      .modal-header h3 {
+        font-size: 1.1rem;
+      }
+      .modal-body {
+        padding: 1rem 1.2rem;
+      }
+      .modal-footer {
+        padding: 0.8rem 1.2rem;
+        flex-direction: column-reverse;
+      }
+      .modal-footer .btn-action,
+      .modal-footer .btn-danger {
+        width: 100%;
+        justify-content: center;
+      }
+      .toast {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        padding: 0.8rem 1rem;
+        font-size: 0.82rem;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .view-header h1 {
+        font-size: 1.35rem;
+      }
+      .time-group {
+        grid-template-columns: 1fr;
+      }
+      .admin-title-wrap h2 {
+        font-size: 1.2rem;
+      }
+    }
+
     /* Empty state */
     .empty-state {
       display: none;
@@ -1466,7 +1767,7 @@
       <div class="form-wrapper">
         <div class="view-header">
           <div class="eyebrow">New Entry</div>
-          <h1>Create Your Profile</h1>
+          <h1>DATE FORM</h1>
           <p>Provide your details below. Submissions are instantly synchronized with the portal.</p>
         </div>
 
@@ -1478,7 +1779,7 @@
               <label for="name">Full Name</label>
               <div class="input-wrapper has-icon">
                 <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <input type="text" id="name" placeholder="e.g. Amara Okonkwo" autocomplete="off" maxlength="100"/>
+                <input type="text" id="name" placeholder="Enter full name" autocomplete="off" maxlength="100"/>
               </div>
               <div class="error-msg" id="error-name">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -1553,19 +1854,44 @@
               </div>
             </div>
 
-            <!-- Number of Hours -->
+            <!-- Time Worked (Hours, Minutes, Seconds) -->
             <div class="form-group" id="group-hours">
-              <label for="hours">Number of Hours Worked / Logged</label>
-              <div class="number-wrap">
-                <input type="number" id="hours" placeholder="e.g. 40" min="0" max="9999" value=""/>
-                <div class="number-btns">
-                  <button type="button" id="inc-btn" aria-label="Increment hours">▲</button>
-                  <button type="button" id="dec-btn" aria-label="Decrement hours">▼</button>
+              <label>Time Worked / Logged</label>
+              <div class="time-group">
+                <div class="time-field">
+                  <label for="hours">Hours</label>
+                  <div class="number-wrap">
+                    <input type="number" id="hours" placeholder="0" min="0" max="9999" value=""/>
+                    <div class="number-btns">
+                      <button type="button" id="inc-btn" aria-label="Increment hours">▲</button>
+                      <button type="button" id="dec-btn" aria-label="Decrement hours">▼</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="time-field">
+                  <label for="minutes">Minutes</label>
+                  <div class="number-wrap">
+                    <input type="number" id="minutes" placeholder="0" min="0" max="59" value=""/>
+                    <div class="number-btns">
+                      <button type="button" id="min-inc-btn" aria-label="Increment minutes">▲</button>
+                      <button type="button" id="min-dec-btn" aria-label="Decrement minutes">▼</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="time-field">
+                  <label for="seconds">Seconds</label>
+                  <div class="number-wrap">
+                    <input type="number" id="seconds" placeholder="0" min="0" max="59" value=""/>
+                    <div class="number-btns">
+                      <button type="button" id="sec-inc-btn" aria-label="Increment seconds">▲</button>
+                      <button type="button" id="sec-dec-btn" aria-label="Decrement seconds">▼</button>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="error-msg" id="error-hours">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span>Hours field is required and must be between 0 and 9999.</span>
+                <span>Time field is required. Hours 0-9999, Minutes 0-59, Seconds 0-59.</span>
               </div>
             </div>
 
@@ -1683,8 +2009,8 @@
 
         <div class="kpi-card">
           <div>
-            <div class="label">Average Hours</div>
-            <div class="val" id="kpi-avg-hours">0h</div>
+            <div class="label">Average Time</div>
+            <div class="val" id="kpi-avg-hours">00:00:00</div>
           </div>
           <div class="kpi-icon-bg">
             <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -1718,7 +2044,7 @@
         <div class="chart-card">
           <h3>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            Hours Logged Distribution
+            Time Logged Distribution
           </h3>
           <div class="bar-chart-container" id="hours-bar-chart">
             <!-- Rendered dynamically by script -->
@@ -1804,7 +2130,6 @@
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
           <h4>No Profiles Found</h4>
           <p>Try clearing filters or add profiles using the form.</p>
-          <button type="button" class="btn-action gold-solid" id="btn-load-mock-empty" style="margin: 0 auto;">Load Demo Profiles</button>
         </div>
 
         <!-- Pagination Bar -->
@@ -1834,7 +2159,7 @@
           <!-- Name -->
           <div class="form-group" id="edit-group-name">
             <label for="edit-name">Full Name</label>
-            <input type="text" id="edit-name" placeholder="e.g. Amara Okonkwo" maxlength="100"/>
+            <input type="text" id="edit-name" placeholder="Enter full name" maxlength="100"/>
             <div class="error-msg" id="edit-error-name">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
               <span>Full name is required.</span>
@@ -1907,19 +2232,44 @@
             </div>
           </div>
 
-          <!-- Hours -->
+          <!-- Time Worked (Hours, Minutes, Seconds) -->
           <div class="form-group" id="edit-group-hours">
-            <label for="edit-hours">Hours</label>
-            <div class="number-wrap">
-              <input type="number" id="edit-hours" placeholder="e.g. 40" min="0" max="9999"/>
-              <div class="number-btns">
-                <button type="button" id="edit-inc-btn">▲</button>
-                <button type="button" id="edit-dec-btn">▼</button>
+            <label>Time Worked / Logged</label>
+            <div class="time-group">
+              <div class="time-field">
+                <label for="edit-hours">Hours</label>
+                <div class="number-wrap">
+                  <input type="number" id="edit-hours" placeholder="0" min="0" max="9999"/>
+                  <div class="number-btns">
+                    <button type="button" id="edit-inc-btn">▲</button>
+                    <button type="button" id="edit-dec-btn">▼</button>
+                  </div>
+                </div>
+              </div>
+              <div class="time-field">
+                <label for="edit-minutes">Minutes</label>
+                <div class="number-wrap">
+                  <input type="number" id="edit-minutes" placeholder="0" min="0" max="59"/>
+                  <div class="number-btns">
+                    <button type="button" id="edit-min-inc-btn">▲</button>
+                    <button type="button" id="edit-min-dec-btn">▼</button>
+                  </div>
+                </div>
+              </div>
+              <div class="time-field">
+                <label for="edit-seconds">Seconds</label>
+                <div class="number-wrap">
+                  <input type="number" id="edit-seconds" placeholder="0" min="0" max="59"/>
+                  <div class="number-btns">
+                    <button type="button" id="edit-sec-inc-btn">▲</button>
+                    <button type="button" id="edit-sec-dec-btn">▼</button>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="error-msg" id="edit-error-hours">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span>Hours field is required and must be between 0 and 9999.</span>
+              <span>Time field is required. Hours 0-9999, Minutes 0-59, Seconds 0-59.</span>
             </div>
           </div>
 
@@ -1953,7 +2303,7 @@
       </div>
       <div class="modal-body">
         <p class="modal-delete-text">
-          Are you sure you want to delete <strong id="delete-profile-name">Amara Okonkwo</strong>'s profile?<br/>
+          Are you sure you want to delete <strong id="delete-profile-name">this profile</strong>?<br/>
           <span style="color: var(--error); font-size: 0.78rem; display:block; margin-top: 0.5rem;">This action is permanent and cannot be undone.</span>
         </p>
         <input type="hidden" id="delete-profile-id"/>
@@ -1972,62 +2322,46 @@
     const STORAGE_KEY = 'aura_user_profiles';
     const SESSION_AUTH_KEY = 'aura_admin_logged_in';
 
-    // Mock data profiles for initial load
-    const MOCK_PROFILES = [
-      {
-        id: 'mock-1',
-        name: 'Amara Okonkwo',
-        country: 'Nigeria',
-        hours: 42,
-        photo: '', // Empty means initials avatar
-        createdAt: new Date(Date.now() - 3600000 * 24 * 3).toISOString() // 3 days ago
-      },
-      {
-        id: 'mock-2',
-        name: 'James Smith',
-        country: 'United Kingdom',
-        hours: 120,
-        photo: '',
-        createdAt: new Date(Date.now() - 3600000 * 24 * 1.5).toISOString() // 1.5 days ago
-      },
-      {
-        id: 'mock-3',
-        name: 'Chloe Chen',
-        country: 'Canada',
-        hours: 15,
-        photo: '',
-        createdAt: new Date(Date.now() - 3600000 * 12).toISOString() // 12 hours ago
-      },
-      {
-        id: 'mock-4',
-        name: 'Yuki Tanaka',
-        country: 'Japan',
-        hours: 80,
-        photo: '',
-        createdAt: new Date(Date.now() - 3600000 * 2).toISOString() // 2 hours ago
-      },
-      {
-        id: 'mock-5',
-        name: 'Aarav Patel',
-        country: 'India',
-        hours: 350,
-        photo: '',
-        createdAt: new Date(Date.now() - 600000).toISOString() // 10 mins ago
-      }
-    ];
+    // ==================== TIME FORMAT UTILITIES ====================
+    // Normalize profile - ensures minutes/seconds exist (backward compat with old data)
+    function normalizeProfile(p) {
+      if (typeof p.minutes !== 'number' || isNaN(p.minutes)) p.minutes = 0;
+      if (typeof p.seconds !== 'number' || isNaN(p.seconds)) p.seconds = 0;
+      if (typeof p.hours !== 'number' || isNaN(p.hours)) p.hours = 0;
+      return p;
+    }
+
+    // Format a profile's time as HH:MM:SS
+    function formatTime(profile) {
+      const h = String(profile.hours || 0).padStart(2, '0');
+      const m = String(profile.minutes || 0).padStart(2, '0');
+      const s = String(profile.seconds || 0).padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    // Convert a profile's time to total seconds
+    function profileToSeconds(profile) {
+      return (profile.hours || 0) * 3600 + (profile.minutes || 0) * 60 + (profile.seconds || 0);
+    }
+
+    // Format total seconds as HH:MM:SS
+    function formatSeconds(totalSec) {
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
 
     function loadDatabase() {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         try {
-          profiles = JSON.parse(stored);
+          profiles = JSON.parse(stored).map(normalizeProfile);
         } catch(e) {
           profiles = [];
         }
       } else {
-        // Pre-populate mock data on first load
-        profiles = [...MOCK_PROFILES];
-        saveDatabase();
+        profiles = [];
       }
     }
 
@@ -2117,50 +2451,41 @@
 
     // ==================== CUSTOM NUMBER STEPPERS ====================
     function initNumberSteppers() {
-      // Main public form
-      const hoursInput = document.getElementById('hours');
-      const incBtn = document.getElementById('inc-btn');
-      const decBtn = document.getElementById('dec-btn');
+      // Helper to attach stepper to a single input
+      function attachStepper(input, btnUp, btnDown, max) {
+        if (!input || !btnUp || !btnDown) return;
+        btnUp.addEventListener('click', () => {
+          const val = parseInt(input.value) || 0;
+          if (val < max) input.value = val + 1;
+          input.dispatchEvent(new Event('input'));
+        });
+        btnDown.addEventListener('click', () => {
+          const val = parseInt(input.value) || 0;
+          if (val > 0) input.value = val - 1;
+          input.dispatchEvent(new Event('input'));
+        });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const val = parseInt(input.value) || 0;
+            if (val < max) input.value = val + 1;
+          } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const val = parseInt(input.value) || 0;
+            if (val > 0) input.value = val - 1;
+          }
+        });
+      }
 
-      incBtn.addEventListener('click', () => {
-        const val = parseInt(hoursInput.value) || 0;
-        if (val < 9999) hoursInput.value = val + 1;
-        hoursInput.dispatchEvent(new Event('input'));
-      });
+      // Main public form steppers
+      attachStepper(document.getElementById('hours'), document.getElementById('inc-btn'), document.getElementById('dec-btn'), 9999);
+      attachStepper(document.getElementById('minutes'), document.getElementById('min-inc-btn'), document.getElementById('min-dec-btn'), 59);
+      attachStepper(document.getElementById('seconds'), document.getElementById('sec-inc-btn'), document.getElementById('sec-dec-btn'), 59);
 
-      decBtn.addEventListener('click', () => {
-        const val = parseInt(hoursInput.value) || 0;
-        if (val > 0) hoursInput.value = val - 1;
-        hoursInput.dispatchEvent(new Event('input'));
-      });
-
-      // Handle keyboard arrow keys when focused
-      hoursInput.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          const val = parseInt(hoursInput.value) || 0;
-          if (val < 9999) hoursInput.value = val + 1;
-        } else if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          const val = parseInt(hoursInput.value) || 0;
-          if (val > 0) hoursInput.value = val - 1;
-        }
-      });
-
-      // Edit Modal Form Stepper
-      const editHoursInput = document.getElementById('edit-hours');
-      const editIncBtn = document.getElementById('edit-inc-btn');
-      const editDecBtn = document.getElementById('edit-dec-btn');
-
-      editIncBtn.addEventListener('click', () => {
-        const val = parseInt(editHoursInput.value) || 0;
-        if (val < 9999) editHoursInput.value = val + 1;
-      });
-
-      editDecBtn.addEventListener('click', () => {
-        const val = parseInt(editHoursInput.value) || 0;
-        if (val > 0) editHoursInput.value = val - 1;
-      });
+      // Edit modal steppers
+      attachStepper(document.getElementById('edit-hours'), document.getElementById('edit-inc-btn'), document.getElementById('edit-dec-btn'), 9999);
+      attachStepper(document.getElementById('edit-minutes'), document.getElementById('edit-min-inc-btn'), document.getElementById('edit-min-dec-btn'), 59);
+      attachStepper(document.getElementById('edit-seconds'), document.getElementById('edit-sec-inc-btn'), document.getElementById('edit-sec-dec-btn'), 59);
     }
 
     // ==================== PHOTO UPLOAD ENGINE ====================
@@ -2280,11 +2605,15 @@
       const nameInput = document.getElementById('name');
       const countrySelect = document.getElementById('country');
       const hoursInput = document.getElementById('hours');
+      const minutesInput = document.getElementById('minutes');
+      const secondsInput = document.getElementById('seconds');
 
       // Helper to clear error state on typing
       nameInput.addEventListener('input', () => document.getElementById('group-name').classList.remove('has-error'));
       countrySelect.addEventListener('change', () => document.getElementById('group-country').classList.remove('has-error'));
       hoursInput.addEventListener('input', () => document.getElementById('group-hours').classList.remove('has-error'));
+      minutesInput.addEventListener('input', () => document.getElementById('group-hours').classList.remove('has-error'));
+      secondsInput.addEventListener('input', () => document.getElementById('group-hours').classList.remove('has-error'));
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -2322,18 +2651,35 @@
           groupCountry.classList.remove('has-error');
         }
 
-        // 3. Validate Hours
-        const hoursVal = hoursInput.value.trim();
+        // 3. Validate Time (Hours, Minutes, Seconds)
         const groupHours = document.getElementById('group-hours');
         const errHoursSpan = document.getElementById('error-hours').querySelector('span');
+        const hoursVal = hoursInput.value.trim();
+        const minutesVal = minutesInput.value.trim();
+        const secondsVal = secondsInput.value.trim();
         const hoursNum = parseInt(hoursVal);
+        const minutesNum = parseInt(minutesVal);
+        const secondsNum = parseInt(secondsVal);
+        const allEmpty = hoursVal === "" && minutesVal === "" && secondsVal === "";
 
-        if (hoursVal === "") {
-          errHoursSpan.textContent = "Number of hours is required.";
+        if (allEmpty) {
+          errHoursSpan.textContent = "Time is required. Please fill at least one field.";
           groupHours.classList.add('has-error');
           isValid = false;
         } else if (isNaN(hoursNum) || hoursNum < 0 || hoursNum > 9999) {
           errHoursSpan.textContent = "Hours must be an integer between 0 and 9999.";
+          groupHours.classList.add('has-error');
+          isValid = false;
+        } else if (minutesVal !== "" && (isNaN(minutesNum) || minutesNum < 0 || minutesNum > 59)) {
+          errHoursSpan.textContent = "Minutes must be an integer between 0 and 59.";
+          groupHours.classList.add('has-error');
+          isValid = false;
+        } else if (secondsVal !== "" && (isNaN(secondsNum) || secondsNum < 0 || secondsNum > 59)) {
+          errHoursSpan.textContent = "Seconds must be an integer between 0 and 59.";
+          groupHours.classList.add('has-error');
+          isValid = false;
+        } else if (hoursNum === 0 && minutesNum === 0 && secondsNum === 0) {
+          errHoursSpan.textContent = "Time must be greater than 00:00:00.";
           groupHours.classList.add('has-error');
           isValid = false;
         } else {
@@ -2359,6 +2705,8 @@
             name: nameVal,
             country: countryVal,
             hours: hoursNum,
+            minutes: isNaN(minutesNum) ? 0 : minutesNum,
+            seconds: isNaN(secondsNum) ? 0 : secondsNum,
             photo: uploadedPhotoBase64,
             createdAt: new Date().toISOString()
           };
@@ -2461,7 +2809,6 @@
       const searchInput = document.getElementById('admin-search-input');
       const countryFilter = document.getElementById('admin-filter-country');
       const resetDbBtn = document.getElementById('btn-reset-db');
-      const loadMockEmptyBtn = document.getElementById('btn-load-mock-empty');
       const exportCsvBtn = document.getElementById('btn-export-csv');
 
       // Prev & Next Buttons
@@ -2504,14 +2851,6 @@
           renderAdminDashboard();
           showToast("Database has been reset.");
         }
-      });
-
-      // Load Mock Profiles (if empty)
-      loadMockEmptyBtn.addEventListener('click', () => {
-        profiles = [...MOCK_PROFILES];
-        saveDatabase();
-        renderAdminDashboard();
-        showToast("Mock profiles loaded successfully.");
       });
 
       // Export CSV
@@ -2563,13 +2902,13 @@
       const count = profiles.length;
       document.getElementById('kpi-total').textContent = count;
 
-      // Avg Hours
-      let avg = 0;
+      // Avg Time
+      let avgSeconds = 0;
       if (count > 0) {
-        const totalHours = profiles.reduce((sum, p) => sum + p.hours, 0);
-        avg = Math.round(totalHours / count);
+        const totalSeconds = profiles.reduce((sum, p) => sum + profileToSeconds(p), 0);
+        avgSeconds = Math.round(totalSeconds / count);
       }
-      document.getElementById('kpi-avg-hours').textContent = avg + 'h';
+      document.getElementById('kpi-avg-hours').textContent = formatSeconds(avgSeconds);
 
       // Photo upload rate
       let photoRate = 0;
@@ -2624,14 +2963,15 @@
     function renderCharts() {
       const count = profiles.length;
 
-      // A. Hours Distribution bar chart calculations
-      // Brackets: 0-10, 11-50, 51-100, 101-500, 501+
+      // A. Time Distribution bar chart calculations (in total hours)
+      // Brackets: 0-10h, 11-50h, 51-100h, 101-500h, 501h+
       const brackets = [0, 0, 0, 0, 0];
       profiles.forEach(p => {
-        if (p.hours <= 10) brackets[0]++;
-        else if (p.hours <= 50) brackets[1]++;
-        else if (p.hours <= 100) brackets[2]++;
-        else if (p.hours <= 500) brackets[3]++;
+        const totalHours = profileToSeconds(p) / 3600;
+        if (totalHours <= 10) brackets[0]++;
+        else if (totalHours <= 50) brackets[1]++;
+        else if (totalHours <= 100) brackets[2]++;
+        else if (totalHours <= 500) brackets[3]++;
         else brackets[4]++;
       });
 
@@ -2751,7 +3091,7 @@
             <div class="card-divider"></div>
             
             <div class="card-stats">
-              <span class="hours-badge">${profile.hours} hours</span>
+              <span class="hours-badge">${formatTime(profile)}</span>
               <span class="card-date" title="Submitted at ${new Date(profile.createdAt).toLocaleTimeString()}">${formattedDate}</span>
             </div>
           </div>
@@ -2787,7 +3127,9 @@
       document.getElementById('edit-profile-id').value = p.id;
       document.getElementById('edit-name').value = p.name;
       document.getElementById('edit-country').value = p.country;
-      document.getElementById('edit-hours').value = p.hours;
+      document.getElementById('edit-hours').value = p.hours || 0;
+      document.getElementById('edit-minutes').value = p.minutes || 0;
+      document.getElementById('edit-seconds').value = p.seconds || 0;
       
       const avatarPreview = document.getElementById('edit-avatar-preview');
       const clearBtn = document.getElementById('edit-clear-photo-btn');
@@ -2834,6 +3176,8 @@
       const nameVal = document.getElementById('edit-name').value.trim();
       const countryVal = document.getElementById('edit-country').value;
       const hoursVal = document.getElementById('edit-hours').value.trim();
+      const minutesVal = document.getElementById('edit-minutes').value.trim();
+      const secondsVal = document.getElementById('edit-seconds').value.trim();
       
       let isValid = true;
 
@@ -2865,16 +3209,32 @@
         groupCountry.classList.remove('has-error');
       }
 
-      // Validate Hours
+      // Validate Time
       const groupHours = document.getElementById('edit-group-hours');
       const errHoursSpan = document.getElementById('edit-error-hours').querySelector('span');
       const hoursNum = parseInt(hoursVal);
-      if (hoursVal === "") {
-        errHoursSpan.textContent = "Hours is required.";
+      const minutesNum = parseInt(minutesVal);
+      const secondsNum = parseInt(secondsVal);
+      const allEmpty = hoursVal === "" && minutesVal === "" && secondsVal === "";
+
+      if (allEmpty) {
+        errHoursSpan.textContent = "Time is required. Please fill at least one field.";
         groupHours.classList.add('has-error');
         isValid = false;
       } else if (isNaN(hoursNum) || hoursNum < 0 || hoursNum > 9999) {
-        errHoursSpan.textContent = "Hours must be between 0 and 9999.";
+        errHoursSpan.textContent = "Hours must be an integer between 0 and 9999.";
+        groupHours.classList.add('has-error');
+        isValid = false;
+      } else if (minutesVal !== "" && (isNaN(minutesNum) || minutesNum < 0 || minutesNum > 59)) {
+        errHoursSpan.textContent = "Minutes must be an integer between 0 and 59.";
+        groupHours.classList.add('has-error');
+        isValid = false;
+      } else if (secondsVal !== "" && (isNaN(secondsNum) || secondsNum < 0 || secondsNum > 59)) {
+        errHoursSpan.textContent = "Seconds must be an integer between 0 and 59.";
+        groupHours.classList.add('has-error');
+        isValid = false;
+      } else if (hoursNum === 0 && minutesNum === 0 && secondsNum === 0) {
+        errHoursSpan.textContent = "Time must be greater than 00:00:00.";
         groupHours.classList.add('has-error');
         isValid = false;
       } else {
@@ -2887,6 +3247,8 @@
       p.name = nameVal;
       p.country = countryVal;
       p.hours = hoursNum;
+      p.minutes = isNaN(minutesNum) ? 0 : minutesNum;
+      p.seconds = isNaN(secondsNum) ? 0 : secondsNum;
       
       saveDatabase();
       closeModal('modal-edit');
@@ -2946,7 +3308,7 @@
       }
 
       // CSV Header
-      let csvContent = "data:text/csv;charset=utf-8,ID,Full Name,Country,Hours,Submission Date\n";
+      let csvContent = "data:text/csv;charset=utf-8,ID,Full Name,Country,Time (HH:MM:SS),Hours,Minutes,Seconds,Submission Date\n";
 
       // CSV Body rows
       profiles.forEach(p => {
@@ -2954,7 +3316,7 @@
         const safeName = p.name.replace(/"/g, '""');
         const safeCountry = p.country.replace(/"/g, '""');
         
-        csvContent += `"${p.id}","${safeName}","${safeCountry}",${p.hours},"${p.createdAt}"\n`;
+        csvContent += `"${p.id}","${safeName}","${safeCountry}","${formatTime(p)}",${p.hours},${p.minutes || 0},${p.seconds || 0},"${p.createdAt}"\n`;
       });
 
       // Trigger browser download anchor
