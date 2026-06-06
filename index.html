@@ -7,6 +7,9 @@
   
   <!-- Modern Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
     /* Reset & Core variables */
@@ -2107,6 +2110,10 @@
           </div>
           
           <div class="toolbar-actions">
+            <button type="button" class="btn-action" id="btn-sync-supabase" title="Refresh from Supabase">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Sync
+            </button>
             <button type="button" class="btn-action" id="btn-export-csv">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Export CSV
@@ -2345,10 +2352,19 @@
 
   <!-- JavaScript Application Logic -->
   <script>
-    // ==================== DATA STORE & LOCAL STORAGE MANAGER ====================
+    // ==================== DATA STORE & SUPABASE CLIENT ====================
     let profiles = [];
     const STORAGE_KEY = 'aura_user_profiles';
     const SESSION_AUTH_KEY = 'aura_admin_logged_in';
+    const SUPABASE_TABLE = 'profiles';
+
+    // Initialize Supabase client
+    const SUPABASE_URL = 'https://fwedxdewktimqfzrbmja.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_nlQieThswZlJXTEmCuqA4Q_Ofg6k8Zc';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Track online state
+    let isOnline = navigator.onLine;
 
     // ==================== TIME FORMAT UTILITIES ====================
     // Normalize profile - ensures minutes/seconds exist (backward compat with old data)
@@ -2381,6 +2397,7 @@
     }
 
     function loadDatabase() {
+      // First load from localStorage as immediate cache
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         try {
@@ -2391,11 +2408,110 @@
       } else {
         profiles = [];
       }
+      // Then fetch fresh from Supabase in background
+      fetchFromSupabase();
     }
 
     function saveDatabase() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
     }
+
+    // ==================== SUPABASE SYNC FUNCTIONS ====================
+    async function fetchFromSupabase() {
+      try {
+        const { data, error } = await supabase
+          .from(SUPABASE_TABLE)
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        if (data) {
+          profiles = data.map(normalizeProfile);
+          saveDatabase();
+          // Re-render the admin dashboard if it's active
+          const adminDashboard = document.getElementById('section-admin-dashboard');
+          if (adminDashboard && adminDashboard.classList.contains('active')) {
+            renderAdminDashboard();
+          }
+        }
+      } catch (err) {
+        console.warn('Supabase fetch failed, using local cache:', err.message);
+      }
+    }
+
+    async function insertToSupabase(profile) {
+      try {
+        const { data, error } = await supabase
+          .from(SUPABASE_TABLE)
+          .insert([{
+            id: profile.id,
+            name: profile.name,
+            country: profile.country,
+            hours: profile.hours,
+            minutes: profile.minutes,
+            seconds: profile.seconds,
+            photo: profile.photo || null,
+            created_at: profile.createdAt
+          }]);
+        if (error) throw error;
+        return { success: true };
+      } catch (err) {
+        console.warn('Supabase insert failed, saved locally only:', err.message);
+        return { success: false, error: err.message };
+      }
+    }
+
+    async function updateInSupabase(profile) {
+      try {
+        const { error } = await supabase
+          .from(SUPABASE_TABLE)
+          .update({
+            name: profile.name,
+            country: profile.country,
+            hours: profile.hours,
+            minutes: profile.minutes,
+            seconds: profile.seconds,
+            photo: profile.photo || null
+          })
+          .eq('id', profile.id);
+        if (error) throw error;
+        return { success: true };
+      } catch (err) {
+        console.warn('Supabase update failed:', err.message);
+        return { success: false, error: err.message };
+      }
+    }
+
+    async function deleteFromSupabase(id) {
+      try {
+        const { error } = await supabase
+          .from(SUPABASE_TABLE)
+          .delete()
+          .eq('id', id);
+        if (error) throw error;
+        return { success: true };
+      } catch (err) {
+        console.warn('Supabase delete failed:', err.message);
+        return { success: false, error: err.message };
+      }
+    }
+
+    async function clearSupabase() {
+      try {
+        const { error } = await supabase
+          .from(SUPABASE_TABLE)
+          .delete()
+          .neq('id', '___never___');
+        if (error) throw error;
+        return { success: true };
+      } catch (err) {
+        console.warn('Supabase clear failed:', err.message);
+        return { success: false, error: err.message };
+      }
+    }
+
+    // Online/offline listeners
+    window.addEventListener('online', () => { isOnline = true; fetchFromSupabase(); });
+    window.addEventListener('offline', () => { isOnline = false; });
 
     // ==================== APP CONTROLLER ====================
     document.addEventListener('DOMContentLoaded', () => {
@@ -2752,6 +2868,13 @@
           form.reset();
           if (window.clearMainFormUpload) window.clearMainFormUpload();
 
+          // Push to Supabase in background
+          insertToSupabase(newProfile).then(res => {
+            if (res.success) {
+              console.log('Saved to Supabase');
+            }
+          });
+
           // If admin dashboard is currently active, refresh it so the new data shows up
           const adminDashboard = document.getElementById('section-admin-dashboard');
           if (adminDashboard.classList.contains('active')) {
@@ -2844,6 +2967,7 @@
       const countryFilter = document.getElementById('admin-filter-country');
       const resetDbBtn = document.getElementById('btn-reset-db');
       const exportCsvBtn = document.getElementById('btn-export-csv');
+      const syncSupabaseBtn = document.getElementById('btn-sync-supabase');
 
       // Prev & Next Buttons
       const prevBtn = document.getElementById('btn-page-prev');
@@ -2903,17 +3027,33 @@
         profiles = [];
         saveDatabase();
         currentPage = 1;
-        currentPage = 1;
         document.getElementById('admin-search-input').value = '';
         document.getElementById('admin-filter-country').value = '';
         closeModal('modal-reset');
         renderAdminDashboard();
+        clearSupabase();
         showToast(`Successfully reset database. ${count} profile(s) deleted.`);
       });
 
       // Export CSV
       exportCsvBtn.addEventListener('click', () => {
         exportToCSV();
+      });
+
+      // Sync from Supabase
+      syncSupabaseBtn.addEventListener('click', async () => {
+        syncSupabaseBtn.disabled = true;
+        const originalHTML = syncSupabaseBtn.innerHTML;
+        syncSupabaseBtn.innerHTML = '<span class="spinner" style="display:inline-block; width:12px; height:12px; border-width:2px;"></span> Syncing...';
+        try {
+          await fetchFromSupabase();
+          showToast("Synced with Supabase successfully.");
+        } catch (e) {
+          showToast("Sync failed. Check connection.", true);
+        } finally {
+          syncSupabaseBtn.disabled = false;
+          syncSupabaseBtn.innerHTML = originalHTML;
+        }
       });
 
       // Modal Edit submission
@@ -3220,6 +3360,7 @@
           clearBtn.style.display = 'none';
           statusLabel.textContent = "Photo removed.";
           renderAdminDashboard();
+          updateInSupabase(p);
         }
       };
 
@@ -3311,6 +3452,7 @@
       saveDatabase();
       closeModal('modal-edit');
       renderAdminDashboard();
+      updateInSupabase(p);
       showToast(`Updated ${nameVal}'s profile details.`);
     }
 
@@ -3332,6 +3474,7 @@
       const name = profiles[index].name;
       profiles.splice(index, 1);
       saveDatabase();
+      deleteFromSupabase(id);
 
       closeModal('modal-delete');
       renderAdminDashboard();
