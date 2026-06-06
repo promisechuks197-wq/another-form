@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --surface: #151518;
+      --card: #1c1c21;
+      --border: #2e2e38;
+      --border-focus: #c8a96e;
+      --accent: #c8a96e;
+      --accent-light: #e4c98a;
+      --text: #f0ede8;
+      --muted: #7a7880;
+      --input-bg: #111114;
+      --error: #e06c75;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background-image:
+        radial-gradient(ellipse 60% 50% at 20% 10%, rgba(200,169,110,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 90%, rgba(200,169,110,0.04) 0%, transparent 50%);
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .header {
+      margin-bottom: 2.5rem;
+    }
+
+    .header .eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: var(--text);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      font-weight: 300;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    }
+
+    .form-group {
+      margin-bottom: 1.6rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 0.85rem 1.1rem;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(200,169,110,0.12);
+    }
+
+    input::placeholder { color: var(--muted); opacity: 0.6; }
+
+    /* Number input with custom arrows */
+    .number-wrap {
+      position: relative;
+    }
+
+    .number-wrap input[type="number"] {
+      padding-right: 3rem;
+    }
+
+    .number-wrap input[type="number"]::-webkit-inner-spin-button,
+    .number-wrap input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+
+    .number-btns {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+    }
+
+    .number-btns button {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.65rem;
+      transition: color 0.2s, background 0.2s;
+      padding: 0 0.75rem;
+    }
+
+    .number-btns button:first-child {
+      border-bottom: 1px solid var(--border);
+      border-radius: 0 10px 0 0;
+    }
+
+    .number-btns button:last-child {
+      border-radius: 0 0 10px 0;
+    }
+
+    .number-btns button:hover {
+      color: var(--accent);
+      background: rgba(200,169,110,0.06);
+    }
+
+    /* Select */
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 0.8rem;
+    }
+
+    select option {
+      background: #1c1c21;
+    }
+
+    /* Upload area */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s;
+      background: var(--input-bg);
+      position: relative;
+    }
+
+    .upload-area:hover,
+    .upload-area.drag-over {
+      border-color: var(--accent);
+      background: rgba(200,169,110,0.04);
+    }
+
+    .upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(200,169,110,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.9rem;
+    }
+
+    .upload-icon svg {
+      stroke: var(--accent);
+    }
+
+    .upload-area .title {
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+
+    .upload-area .sub {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .upload-area .sub span {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Preview */
+    #preview-wrap {
+      display: none;
+      margin-top: 1rem;
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #preview-wrap img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent);
+    }
+
+    #remove-img {
+      position: absolute;
+      top: -4px; right: -4px;
+      background: var(--error);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 2rem 0;
+    }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #0d0d0f;
+      border: none;
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-light);
+      box-shadow: 0 8px 24px rgba(200,169,110,0.25);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* Success toast */
+    #toast {
+      display: none;
+      margin-top: 1.2rem;
+      background: rgba(200,169,110,0.12);
+      border: 1px solid rgba(200,169,110,0.3);
+      border-radius: 10px;
+      padding: 0.9rem 1.2rem;
+      color: var(--accent-light);
+      font-size: 0.88rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="header">
+    <div class="eyebrow">New Entry</div>
+    <h1>Your Profile</h1>
+    <p>Fill in your details below to get started.</p>
+  </div>
+
+  <div class="card">
+    <form id="profile-form" novalidate>
+
+      <!-- Name -->
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="e.g. Amara Okonkwo" autocomplete="off"/>
+      </div>
+
+      <!-- Country -->
+      <div class="form-group">
+        <label for="country">Country</label>
+        <div class="select-wrap">
+          <select id="country">
+            <option value="" disabled selected>Select your country</option>
+            <option>Nigeria</option>
+            <option>Ghana</option>
+            <option>Kenya</option>
+            <option>South Africa</option>
+            <option>Egypt</option>
+            <option>Ethiopia</option>
+            <option>Tanzania</option>
+            <option>Uganda</option>
+            <option>United States</option>
+            <option>United Kingdom</option>
+            <option>Canada</option>
+            <option>France</option>
+            <option>Germany</option>
+            <option>India</option>
+            <option>Brazil</option>
+            <option>Australia</option>
+            <option>China</option>
+            <option>Japan</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Hours -->
+      <div class="form-group">
+        <label for="hours">Number of Hours</label>
+        <div class="number-wrap">
+          <input type="number" id="hours" placeholder="0" min="0" max="9999" value=""/>
+          <div class="number-btns">
+            <button type="button" id="inc">▲</button>
+            <button type="button" id="dec">▼</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Photo Upload -->
+      <div class="form-group">
+        <label>Profile Picture</label>
+        <div class="upload-area" id="upload-area">
+          <input type="file" id="photo" accept="image/*"/>
+          <div class="upload-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="title">Drop your photo here</div>
+          <div class="sub">or <span>browse files</span> - PNG, JPG, WEBP</div>
+        </div>
+        <div id="preview-wrap">
+          <img id="preview-img" src="" alt="Preview"/>
+          <button type="button" id="remove-img">✕</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit">Submit Profile</button>
+      <div id="toast">Profile submitted successfully. Thank you!</div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  // Number stepper
+  const hoursInput = document.getElementById('hours');
+  document.getElementById('inc').addEventListener('click', () => {
+    hoursInput.value = parseInt(hoursInput.value || 0) + 1;
+  });
+  document.getElementById('dec').addEventListener('click', () => {
+    const val = parseInt(hoursInput.value || 0);
+    if (val > 0) hoursInput.value = val - 1;
+  });
+
+  // Photo preview
+  const photoInput = document.getElementById('photo');
+  const previewWrap = document.getElementById('preview-wrap');
+  const previewImg = document.getElementById('preview-img');
+  const uploadArea = document.getElementById('upload-area');
+
+  photoInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewImg.src = e.target.result;
+        previewWrap.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.getElementById('remove-img').addEventListener('click', () => {
+    photoInput.value = '';
+    previewWrap.style.display = 'none';
+    previewImg.src = '';
+  });
+
+  // Drag over styling
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      photoInput.files = dt.files;
+      photoInput.dispatchEvent(new Event('change'));
+    }
+  });
+
+  // Submit
+  document.getElementById('profile-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const toast = document.getElementById('toast');
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 4000);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,2974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aura - Profile Submission & Admin Portal</title>
+  
+  <!-- Modern Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+  
+  <style>
+    /* Reset & Core variables */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --card: #E8F2FC;
+      --card-solid: #E8F2FC;
+      --border: #D5E0EC;
+      --border-focus: #4A90D9;
+      --accent: #4A90D9;
+      --accent-light: #6FA8E5;
+      --accent-dim: rgba(74, 144, 217, 0.12);
+      --text: #1C2B3A;
+      --muted: #6B7A8A;
+      --input-bg: #FFFFFF;
+      --primary: #1A2E4A;
+      --error: #e06c75;
+      --error-dim: rgba(224, 108, 117, 0.12);
+      --success: #98c379;
+      --success-dim: rgba(152, 195, 121, 0.15);
+      --info: #61afef;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      margin: 0;
+      background-image:
+        linear-gradient(180deg, #E8F2FC 0%, #FFFFFF 35%),
+        radial-gradient(ellipse 60% 40% at 90% 10%, rgba(74, 144, 217, 0.06) 0%, transparent 60%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 25% 25%, rgba(26, 46, 74, 0.05) 0px, transparent 1px),
+        radial-gradient(circle at 75% 75%, rgba(26, 46, 74, 0.05) 0px, transparent 1px);
+      background-size: 4px 4px, 6px 6px;
+      opacity: 0.6;
+      z-index: 0;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    /* Typography & Utilities */
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Floating Header / Navigation */
+    header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: var(--transition);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+    }
+
+    .logo-mark {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--accent);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.05em;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.95rem;
+      background: rgba(74, 144, 217, 0.05);
+      box-shadow: 0 0 10px rgba(74, 144, 217, 0.1);
+    }
+
+    /* Switch Tabs Controls */
+    .nav-tabs {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px;
+      display: flex;
+      position: relative;
+    }
+
+    .nav-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.4rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--text);
+    }
+
+    .nav-tab-btn.active {
+      background: var(--accent);
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(74, 144, 217, 0.2);
+    }
+
+    /* Views */
+    .view-section {
+      display: none;
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Card styling */
+    .glass-card {
+      background: #FFFFFF;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 50px rgba(74, 144, 217, 0.10);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* --- VIEW 1: PUBLIC FORM --- */
+    .form-wrapper {
+      max-width: 580px;
+      margin: 1.5rem auto;
+    }
+
+    .view-header {
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    .view-header .eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .view-header h1 {
+      font-size: 2.5rem;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+    }
+
+    .view-header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 300;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 1.8rem;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper svg.field-icon {
+      position: absolute;
+      left: 1rem;
+      stroke: var(--muted);
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 0.9rem 1.2rem;
+      outline: none;
+      transition: var(--transition);
+      appearance: none;
+    }
+
+    /* Padding for fields with left icons */
+    .has-icon input[type="text"],
+    .has-icon select {
+      padding-left: 2.8rem;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.15);
+      background: #FFFFFF;
+    }
+
+    input[type="text"]:focus + svg.field-icon,
+    .has-icon select:focus ~ svg.field-icon {
+      stroke: var(--accent);
+    }
+
+    input::placeholder { color: var(--muted); opacity: 0.5; }
+
+    /* Custom inline errors */
+    .error-msg {
+      color: var(--error);
+      font-size: 0.75rem;
+      margin-top: 0.4rem;
+      display: none;
+      align-items: center;
+      gap: 0.3rem;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-group.has-error input,
+    .form-group.has-error select,
+    .form-group.has-error .upload-area {
+      border-color: var(--error) !important;
+      box-shadow: 0 0 0 3px var(--error-dim) !important;
+    }
+
+    .form-group.has-error .error-msg {
+      display: flex;
+    }
+
+    /* Number stepper */
+    .number-wrap {
+      position: relative;
+      display: flex;
+      width: 100%;
+    }
+
+    .number-wrap input[type="number"] {
+      padding-right: 3.5rem;
+    }
+
+    .number-wrap input[type="number"]::-webkit-inner-spin-button,
+    .number-wrap input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .number-btns {
+      position: absolute;
+      right: 4px;
+      top: 4px;
+      bottom: 4px;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+      width: 2.2rem;
+    }
+
+    .number-btns button {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.55rem;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .number-btns button:first-child {
+      border-bottom: 1px solid var(--border);
+      border-radius: 0 8px 0 0;
+    }
+
+    .number-btns button:last-child {
+      border-radius: 0 0 8px 0;
+    }
+
+    .number-btns button:hover {
+      color: var(--accent);
+      background: rgba(74, 144, 217, 0.08);
+    }
+
+    /* Select element custom arrow */
+    .select-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .select-wrap:focus-within::after {
+      color: var(--accent);
+    }
+
+    select option {
+      background: var(--card-solid);
+      color: var(--text);
+    }
+
+    /* Drag & Drop Photo Upload */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 2.2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background: var(--input-bg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .upload-area:hover,
+    .upload-area.drag-over {
+      border-color: var(--accent);
+      background: rgba(74, 144, 217, 0.04);
+      box-shadow: 0 0 15px rgba(74, 144, 217, 0.05) inset;
+    }
+
+    .upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-dim);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.8rem;
+      transition: var(--transition);
+    }
+
+    .upload-area:hover .upload-icon {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 144, 217, 0.2);
+    }
+
+    .upload-icon svg {
+      stroke: var(--accent);
+      transition: var(--transition);
+    }
+
+    .upload-area .title {
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+
+    .upload-area .sub {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .upload-area .sub span {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Photo preview */
+    .preview-container {
+      display: none;
+      margin-top: 1.2rem;
+      background: rgba(232, 242, 252, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.8rem 1.2rem;
+      align-items: center;
+      justify-content: space-between;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .preview-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .preview-image-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent);
+      box-shadow: 0 4px 10px rgba(74, 144, 217, 0.12);
+    }
+
+    .preview-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text);
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .preview-size {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .remove-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .remove-btn:hover {
+      color: var(--error);
+      border-color: var(--error);
+      background: var(--error-dim);
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--border) 20%, var(--border) 80%, transparent 100%);
+      margin: 2rem 0;
+    }
+
+    /* Submit Button & States */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 12px;
+      padding: 1.1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      box-shadow: 0 6px 20px rgba(74, 144, 217, 0.15);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(74, 144, 217, 0.3);
+      filter: brightness(1.05);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      background: var(--border);
+      color: var(--muted);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(26, 46, 74, 0.25);
+      border-top: 2px solid #1A2E4A;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #FFFFFF;
+      border: 1px solid var(--accent);
+      border-left: 4px solid var(--accent);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      color: var(--text);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      box-shadow: 0 12px 30px rgba(74, 144, 217, 0.15);
+      transform: translateY(100px);
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .toast-icon {
+      color: var(--accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* --- VIEW 2: ADMIN LOGIN --- */
+    .auth-wrapper {
+      max-width: 440px;
+      margin: 4rem auto;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .auth-header svg {
+      stroke: var(--accent);
+      margin-bottom: 1rem;
+      background: var(--accent-dim);
+      border-radius: 50%;
+      padding: 10px;
+    }
+
+    .auth-header h2 {
+      font-size: 2rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .auth-header p {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .demo-creds {
+      background: rgba(74, 144, 217, 0.05);
+      border: 1px dashed var(--border);
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+    }
+
+    .demo-creds strong {
+      color: var(--text);
+    }
+
+    .demo-btn-autofill {
+      color: var(--accent);
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 500;
+      background: transparent;
+      border: none;
+    }
+
+    /* --- VIEW 3: ADMIN DASHBOARD --- */
+    .admin-container {
+      width: 100%;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .admin-container.active {
+      display: block;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+
+    .admin-title-wrap h2 {
+      font-size: 2.2rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .admin-title-wrap p {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .admin-action-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .btn-logout {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-logout:hover {
+      color: var(--text);
+      border-color: var(--muted);
+      background: rgba(232, 242, 252, 0.6);
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 992px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 576px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 110px;
+      transition: var(--transition);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-focus);
+      box-shadow: 0 8px 20px rgba(74, 144, 217, 0.12);
+    }
+
+    .kpi-card .label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .kpi-card .val {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 0.5rem;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .kpi-card .val.gold {
+      color: var(--accent);
+    }
+
+    .kpi-icon-bg {
+      position: absolute;
+      right: 1rem;
+      bottom: 0.5rem;
+      opacity: 0.05;
+      color: var(--accent);
+      pointer-events: none;
+    }
+
+    /* Charts Layout Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.8rem;
+    }
+
+    .chart-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 1.2rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chart-card h3 svg {
+      stroke: var(--accent);
+    }
+
+    /* Pure CSS/SVG Bar Chart styles */
+    .bar-chart-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding-top: 0.5rem;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 45px;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .bar-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .bar-track {
+      background: var(--input-bg);
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%);
+      height: 100%;
+      border-radius: 6px;
+      width: 0%;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 10px rgba(74, 144, 217, 0.3);
+    }
+
+    .bar-value {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      text-align: right;
+    }
+
+    /* Country List visual representation */
+    .country-chart-list {
+      max-height: 230px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      padding-right: 5px;
+    }
+
+    .country-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0.8rem;
+      background: rgba(232, 242, 252, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.85rem;
+      transition: var(--transition);
+    }
+
+    .country-row:hover {
+      border-color: rgba(74, 144, 217, 0.3);
+      background: rgba(74, 144, 217, 0.02);
+    }
+
+    .country-name {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 500;
+    }
+
+    .country-count-badge {
+      background: var(--accent-dim);
+      color: var(--accent-light);
+      padding: 0.15rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid rgba(74, 144, 217, 0.2);
+    }
+
+    /* Controls & Table Toolbar */
+    .toolbar-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px 16px 0 0;
+      padding: 1.5rem;
+      border-bottom: none;
+    }
+
+    .toolbar-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .search-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      max-width: 320px;
+      width: 100%;
+    }
+
+    .search-input-wrap input {
+      padding-left: 2.5rem;
+      padding-right: 1rem;
+      font-size: 0.85rem;
+      border-radius: 10px;
+      height: 42px;
+    }
+
+    .search-input-wrap svg {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      stroke: var(--muted);
+      pointer-events: none;
+    }
+
+    .filter-select-wrap {
+      max-width: 200px;
+      width: 100%;
+    }
+
+    .filter-select-wrap select {
+      font-size: 0.85rem;
+      border-radius: 10px;
+      height: 42px;
+      padding: 0.5rem 2.2rem 0.5rem 1rem;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .btn-action {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      height: 42px;
+    }
+
+    .btn-action:hover {
+      border-color: var(--accent);
+      color: var(--accent-light);
+      background: rgba(74, 144, 217, 0.05);
+    }
+
+    .btn-action.gold-solid {
+      background: var(--accent);
+      color: #FFFFFF;
+      border: none;
+      box-shadow: 0 4px 12px rgba(74, 144, 217, 0.15);
+    }
+
+    .btn-action.gold-solid:hover {
+      background: var(--accent-light);
+      color: #FFFFFF;
+      box-shadow: 0 6px 18px rgba(74, 144, 217, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Profile Cards List Layout (Premium Grid) */
+    .table-container {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 16px 16px;
+      overflow: hidden;
+    }
+
+    .profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      padding: 1.5rem;
+    }
+
+    @media (max-width: 992px) {
+      .profiles-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 650px) {
+      .profiles-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Empty state */
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+      grid-column: 1 / -1;
+    }
+
+    .empty-state svg {
+      stroke: var(--muted);
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h4 {
+      font-size: 1.2rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+      font-size: 0.85rem;
+      max-width: 300px;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* Profile card elements */
+    .profile-card {
+      background: rgba(232, 242, 252, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .profile-card:hover {
+      border-color: rgba(74, 144, 217, 0.4);
+      background: rgba(74, 144, 217, 0.015);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(74, 144, 217, 0.12);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid var(--accent);
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(74, 144, 217, 0.10);
+    }
+
+    .card-initials-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #FFFFFF;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+      box-shadow: 0 4px 10px rgba(74, 144, 217, 0.2);
+    }
+
+    .card-details {
+      display: flex;
+      flex-direction: column;
+      min-width: 0; /* Prevents overflow of text */
+    }
+
+    .card-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .card-country {
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-top: 0.15rem;
+    }
+
+    .card-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0.8rem 0;
+    }
+
+    .card-stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .hours-badge {
+      background: rgba(74, 144, 217, 0.08);
+      border: 1px solid rgba(74, 144, 217, 0.2);
+      color: var(--accent-light);
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .card-date {
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+
+    /* Card Actions (Hover Overlay or Corner Buttons) */
+    .card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .icon-btn:hover {
+      color: var(--text);
+      border-color: var(--muted);
+      background: rgba(232, 242, 252, 0.7);
+    }
+
+    .icon-btn.btn-delete:hover {
+      color: var(--error);
+      border-color: var(--error);
+      background: var(--error-dim);
+    }
+
+    .icon-btn.btn-edit:hover {
+      color: var(--info);
+      border-color: var(--info);
+      background: rgba(97, 175, 239, 0.1);
+    }
+
+    /* Paging and Info bar */
+    .pagination-bar {
+      border-top: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .pagination-btns {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-page {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .btn-page:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent-light);
+    }
+
+    .btn-page:disabled {
+      color: var(--muted);
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* --- MODALS (Edit Profile & Delete Confirmation) --- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 46, 74, 0.5);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-card {
+      background: var(--card-solid);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 24px 70px rgba(74, 144, 217, 0.18);
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+    }
+
+    .modal-backdrop.show .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.35rem;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 1.2rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.8rem;
+    }
+
+    /* Modal dialog overrides */
+    .modal-delete-text {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .modal-delete-text strong {
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: var(--error);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-danger:hover {
+      background: #eb8089;
+      box-shadow: 0 4px 12px rgba(224, 108, 117, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Navigation -->
+  <header>
+    <div class="nav-container">
+      <div class="logo" id="logo-btn">
+        <div class="logo-icon">A</div>
+        <div class="logo-mark">AURA</div>
+      </div>
+      
+      <!-- View Switcher Tabs -->
+      <nav class="nav-tabs">
+        <button type="button" class="nav-tab-btn active" id="tab-form">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          Submit Profile
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab-admin">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Admin Portal
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Toast Notification Wrapper -->
+  <div id="toast" class="toast">
+    <div class="toast-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <span id="toast-text">Profile submitted successfully. Thank you!</span>
+  </div>
+
+  <div class="container">
+
+    <!-- ==================== VIEW 1: PUBLIC SUBMISSION FORM ==================== -->
+    <section id="section-form" class="view-section active">
+      <div class="form-wrapper">
+        <div class="view-header">
+          <div class="eyebrow">New Entry</div>
+          <h1>Create Your Profile</h1>
+          <p>Provide your details below. Submissions are instantly synchronized with the portal.</p>
+        </div>
+
+        <div class="glass-card">
+          <form id="profile-form" novalidate>
+            
+            <!-- Full Name -->
+            <div class="form-group" id="group-name">
+              <label for="name">Full Name</label>
+              <div class="input-wrapper has-icon">
+                <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input type="text" id="name" placeholder="e.g. Amara Okonkwo" autocomplete="off" maxlength="100"/>
+              </div>
+              <div class="error-msg" id="error-name">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>Full name is required.</span>
+              </div>
+            </div>
+
+            <!-- Country Selection -->
+            <div class="form-group" id="group-country">
+              <label for="country">Country of Residence</label>
+              <div class="select-wrap has-icon">
+                <select id="country">
+                  <option value="" disabled selected>Select your country</option>
+                  <!-- 50+ Countries -->
+                  <option>Nigeria</option>
+                  <option>Ghana</option>
+                  <option>Kenya</option>
+                  <option>South Africa</option>
+                  <option>Egypt</option>
+                  <option>Ethiopia</option>
+                  <option>Tanzania</option>
+                  <option>Uganda</option>
+                  <option>Rwanda</option>
+                  <option>Senegal</option>
+                  <option>Morocco</option>
+                  <option>United States</option>
+                  <option>United Kingdom</option>
+                  <option>Canada</option>
+                  <option>France</option>
+                  <option>Germany</option>
+                  <option>Spain</option>
+                  <option>Italy</option>
+                  <option>Portugal</option>
+                  <option>Austria</option>
+                  <option>Greece</option>
+                  <option>Netherlands</option>
+                  <option>Switzerland</option>
+                  <option>Sweden</option>
+                  <option>Norway</option>
+                  <option>Denmark</option>
+                  <option>Finland</option>
+                  <option>Belgium</option>
+                  <option>Ireland</option>
+                  <option>Poland</option>
+                  <option>Ukraine</option>
+                  <option>India</option>
+                  <option>China</option>
+                  <option>Japan</option>
+                  <option>South Korea</option>
+                  <option>Singapore</option>
+                  <option>Malaysia</option>
+                  <option>Indonesia</option>
+                  <option>Philippines</option>
+                  <option>Australia</option>
+                  <option>New Zealand</option>
+                  <option>Saudi Arabia</option>
+                  <option>United Arab Emirates</option>
+                  <option>Turkey</option>
+                  <option>Brazil</option>
+                  <option>Mexico</option>
+                  <option>Argentina</option>
+                  <option>Colombia</option>
+                  <option>Peru</option>
+                  <option>Chile</option>
+                  <option value="Other">Other (Not Listed)</option>
+                </select>
+                <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <div class="error-msg" id="error-country">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>Please select your country.</span>
+              </div>
+            </div>
+
+            <!-- Number of Hours -->
+            <div class="form-group" id="group-hours">
+              <label for="hours">Number of Hours Worked / Logged</label>
+              <div class="number-wrap">
+                <input type="number" id="hours" placeholder="e.g. 40" min="0" max="9999" value=""/>
+                <div class="number-btns">
+                  <button type="button" id="inc-btn" aria-label="Increment hours">▲</button>
+                  <button type="button" id="dec-btn" aria-label="Decrement hours">▼</button>
+                </div>
+              </div>
+              <div class="error-msg" id="error-hours">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>Hours field is required and must be between 0 and 9999.</span>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Photo Upload Area -->
+            <div class="form-group" id="group-photo">
+              <label>Profile Picture <span style="font-weight: normal; text-transform: lowercase; color: var(--muted);">(Optional)</span></label>
+              <div class="upload-area" id="upload-dropzone">
+                <input type="file" id="photo-input" accept="image/png, image/jpeg, image/webp"/>
+                <div class="upload-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                </div>
+                <div class="title">Drop your photo here</div>
+                <div class="sub">or <span>browse files</span> (PNG, JPG, WEBP - max 5MB)</div>
+              </div>
+              
+              <!-- Preview Card -->
+              <div class="preview-container" id="upload-preview-wrap">
+                <div class="preview-info">
+                  <img class="preview-image-circle" id="upload-preview-img" src="" alt="Avatar preview"/>
+                  <div class="preview-text">
+                    <span class="preview-name" id="upload-preview-filename">profile-photo.jpg</span>
+                    <span class="preview-size" id="upload-preview-filesize">0 KB</span>
+                  </div>
+                </div>
+                <button type="button" class="remove-btn" id="upload-remove-btn">
+                  ✕ Remove
+                </button>
+              </div>
+              <div class="error-msg" id="error-photo">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="photo-error-txt">Invalid image file or size exceeds 5MB.</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="form-submit-btn">
+              <span class="spinner" id="form-spinner"></span>
+              <span id="form-btn-text">Submit Profile</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: ADMIN LOGIN PORTAL ==================== -->
+    <section id="section-admin-login" class="view-section">
+      <div class="auth-wrapper">
+        <div class="auth-header">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <h2>Access Admin Portal</h2>
+          <p>Please authorize using system credentials to manage records.</p>
+        </div>
+        
+        <div class="glass-card">
+          <form id="admin-login-form" novalidate>
+            <div class="form-group" id="group-auth-user">
+              <label for="auth-username">Email</label>
+              <input type="email" id="auth-username" placeholder="Enter email address" style="width:100%; background:var(--input-bg); border:1px solid var(--border); border-radius:12px; color:var(--text); font-family:sans-serif; font-size:0.95rem; padding:0.9rem 1.2rem; outline:none; transition:var(--transition);" autocomplete="email"/>
+              <div class="error-msg" id="error-auth-user">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>Email is required.</span>
+              </div>
+            </div>
+
+            <div class="form-group" id="group-auth-pass">
+              <label for="auth-password">Password</label>
+              <input type="password" id="auth-password" placeholder="Enter password" style="width:100%; background:var(--input-bg); border:1px solid var(--border); border-radius:12px; color:var(--text); font-family:sans-serif; font-size:0.95rem; padding:0.9rem 1.2rem; outline:none; transition:var(--transition);" autocomplete="current-password"/>
+              <div class="error-msg" id="error-auth-pass">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>Password is required.</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="auth-submit-btn" style="margin-top: 1rem;">
+              <span>Sign In</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: ADMIN ACTIVE DASHBOARD ==================== -->
+    <section id="section-admin-dashboard" class="admin-container">
+      
+      <!-- Top Action Bar -->
+      <div class="admin-header">
+        <div class="admin-title-wrap">
+          <h2>Administrative Dashboard</h2>
+          <p>Inspect, audit, search, and manage submitted user profiles in real-time.</p>
+        </div>
+        <div class="admin-action-row">
+          <button type="button" class="btn-logout" id="btn-admin-logout">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <!-- Key Performance Indicators (KPIs) -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div>
+            <div class="label">Total Profiles</div>
+            <div class="val gold" id="kpi-total">0</div>
+          </div>
+          <div class="kpi-icon-bg">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div>
+            <div class="label">Average Hours</div>
+            <div class="val" id="kpi-avg-hours">0h</div>
+          </div>
+          <div class="kpi-icon-bg">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div>
+            <div class="label">Photo Upload Rate</div>
+            <div class="val" id="kpi-photo-rate">0%</div>
+          </div>
+          <div class="kpi-icon-bg">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div>
+            <div class="label">Top Represented Country</div>
+            <div class="val" id="kpi-top-country">-</div>
+          </div>
+          <div class="kpi-icon-bg">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts & Visual Distribution Section -->
+      <div class="charts-grid">
+        <!-- Hours bracket distribution -->
+        <div class="chart-card">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Hours Logged Distribution
+          </h3>
+          <div class="bar-chart-container" id="hours-bar-chart">
+            <!-- Rendered dynamically by script -->
+            <div class="bar-row">
+              <div class="bar-label">0 - 10h</div>
+              <div class="bar-track"><div class="bar-fill" style="width: 0%;"></div></div>
+              <div class="bar-value">0</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">11 - 50h</div>
+              <div class="bar-track"><div class="bar-fill" style="width: 0%;"></div></div>
+              <div class="bar-value">0</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">51 - 100h</div>
+              <div class="bar-track"><div class="bar-fill" style="width: 0%;"></div></div>
+              <div class="bar-value">0</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">101 - 500h</div>
+              <div class="bar-track"><div class="bar-fill" style="width: 0%;"></div></div>
+              <div class="bar-value">0</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">501h+</div>
+              <div class="bar-track"><div class="bar-fill" style="width: 0%;"></div></div>
+              <div class="bar-value">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Country Distribution -->
+        <div class="chart-card">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Country Breakdown
+          </h3>
+          <div class="country-chart-list" id="country-rank-list">
+            <!-- Rendered dynamically by script -->
+            <div class="country-row"><span class="country-name">No countries represented</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Filters and Toolbar -->
+      <div class="toolbar-card">
+        <div class="toolbar-flex">
+          <div class="search-filter-group">
+            <div class="search-input-wrap">
+              <input type="text" id="admin-search-input" placeholder="Search profiles by name..." autocomplete="off"/>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            
+            <div class="filter-select-wrap select-wrap">
+              <select id="admin-filter-country">
+                <option value="">All Countries</option>
+                <!-- Generated dynamically based on stored user countries -->
+              </select>
+            </div>
+          </div>
+          
+          <div class="toolbar-actions">
+            <button type="button" class="btn-action" id="btn-export-csv">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+            <button type="button" class="btn-action" id="btn-reset-db">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+              Reset Data
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Profile Grid -->
+      <div class="table-container">
+        <div class="profiles-grid" id="admin-profiles-grid">
+          <!-- Profiles rendered dynamically -->
+        </div>
+        
+        <!-- Empty state element inside the list container -->
+        <div class="empty-state" id="profiles-empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <h4>No Profiles Found</h4>
+          <p>Try clearing filters or add profiles using the form.</p>
+          <button type="button" class="btn-action gold-solid" id="btn-load-mock-empty" style="margin: 0 auto;">Load Demo Profiles</button>
+        </div>
+
+        <!-- Pagination Bar -->
+        <div class="pagination-bar">
+          <div id="pagination-info">Showing 0-0 of 0 entries</div>
+          <div class="pagination-btns">
+            <button type="button" class="btn-page" id="btn-page-prev">Prev</button>
+            <button type="button" class="btn-page" id="btn-page-next">Next</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <!-- ==================== DIALOG MODAL 1: EDIT PROFILE ==================== -->
+  <div class="modal-backdrop" id="modal-edit">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Edit Profile</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('modal-edit')">✕</button>
+      </div>
+      <form id="modal-edit-form" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="edit-profile-id"/>
+
+          <!-- Name -->
+          <div class="form-group" id="edit-group-name">
+            <label for="edit-name">Full Name</label>
+            <input type="text" id="edit-name" placeholder="e.g. Amara Okonkwo" maxlength="100"/>
+            <div class="error-msg" id="edit-error-name">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>Full name is required.</span>
+            </div>
+          </div>
+
+          <!-- Country -->
+          <div class="form-group" id="edit-group-country">
+            <label for="edit-country">Country</label>
+            <div class="select-wrap">
+              <select id="edit-country">
+                <option value="" disabled>Select your country</option>
+                <!-- Copy of countries list -->
+                <option>Nigeria</option>
+                <option>Ghana</option>
+                <option>Kenya</option>
+                <option>South Africa</option>
+                <option>Egypt</option>
+                <option>Ethiopia</option>
+                <option>Tanzania</option>
+                <option>Uganda</option>
+                <option>Rwanda</option>
+                <option>Senegal</option>
+                <option>Morocco</option>
+                <option>United States</option>
+                <option>United Kingdom</option>
+                <option>Canada</option>
+                <option>France</option>
+                <option>Germany</option>
+                <option>Spain</option>
+                <option>Italy</option>
+                <option>Portugal</option>
+                <option>Austria</option>
+                <option>Greece</option>
+                <option>Netherlands</option>
+                <option>Switzerland</option>
+                <option>Sweden</option>
+                <option>Norway</option>
+                <option>Denmark</option>
+                <option>Finland</option>
+                <option>Belgium</option>
+                <option>Ireland</option>
+                <option>Poland</option>
+                <option>Ukraine</option>
+                <option>India</option>
+                <option>China</option>
+                <option>Japan</option>
+                <option>South Korea</option>
+                <option>Singapore</option>
+                <option>Malaysia</option>
+                <option>Indonesia</option>
+                <option>Philippines</option>
+                <option>Australia</option>
+                <option>New Zealand</option>
+                <option>Saudi Arabia</option>
+                <option>United Arab Emirates</option>
+                <option>Turkey</option>
+                <option>Brazil</option>
+                <option>Mexico</option>
+                <option>Argentina</option>
+                <option>Colombia</option>
+                <option>Peru</option>
+                <option>Chile</option>
+                <option value="Other">Other (Not Listed)</option>
+              </select>
+            </div>
+            <div class="error-msg" id="edit-error-country">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>Please select your country.</span>
+            </div>
+          </div>
+
+          <!-- Hours -->
+          <div class="form-group" id="edit-group-hours">
+            <label for="edit-hours">Hours</label>
+            <div class="number-wrap">
+              <input type="number" id="edit-hours" placeholder="e.g. 40" min="0" max="9999"/>
+              <div class="number-btns">
+                <button type="button" id="edit-inc-btn">▲</button>
+                <button type="button" id="edit-dec-btn">▼</button>
+              </div>
+            </div>
+            <div class="error-msg" id="edit-error-hours">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>Hours field is required and must be between 0 and 9999.</span>
+            </div>
+          </div>
+
+          <!-- Optional Photo Edit (Info only - keeps or clears) -->
+          <div class="form-group">
+            <label>Profile Picture</label>
+             <div style="display:flex; align-items:center; gap:1.2rem; background:rgba(232, 242, 252, 0.5); padding:0.8rem; border-radius:10px; border:1px solid var(--border);">
+              <img id="edit-avatar-preview" src="" alt="avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:1px solid var(--accent);"/>
+              <div>
+                <div id="edit-photo-status" style="font-size:0.8rem; color:var(--text);">Uploaded Image</div>
+                <button type="button" class="remove-btn" id="edit-clear-photo-btn" style="margin-top:0.4rem; padding:0.2rem 0.5rem; font-size:0.7rem;">Remove Image</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-action" onclick="closeModal('modal-edit')">Cancel</button>
+          <button type="submit" class="btn-action gold-solid">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== DIALOG MODAL 2: DELETE CONFIRM ==================== -->
+  <div class="modal-backdrop" id="modal-delete">
+    <div class="modal-card" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3>Delete Profile?</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('modal-delete')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-delete-text">
+          Are you sure you want to delete <strong id="delete-profile-name">Amara Okonkwo</strong>'s profile?<br/>
+          <span style="color: var(--error); font-size: 0.78rem; display:block; margin-top: 0.5rem;">This action is permanent and cannot be undone.</span>
+        </p>
+        <input type="hidden" id="delete-profile-id"/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-action" onclick="closeModal('modal-delete')">Cancel</button>
+        <button type="button" class="btn-danger" id="btn-confirm-delete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Logic -->
+  <script>
+    // ==================== DATA STORE & LOCAL STORAGE MANAGER ====================
+    let profiles = [];
+    const STORAGE_KEY = 'aura_user_profiles';
+    const SESSION_AUTH_KEY = 'aura_admin_logged_in';
+
+    // Mock data profiles for initial load
+    const MOCK_PROFILES = [
+      {
+        id: 'mock-1',
+        name: 'Amara Okonkwo',
+        country: 'Nigeria',
+        hours: 42,
+        photo: '', // Empty means initials avatar
+        createdAt: new Date(Date.now() - 3600000 * 24 * 3).toISOString() // 3 days ago
+      },
+      {
+        id: 'mock-2',
+        name: 'James Smith',
+        country: 'United Kingdom',
+        hours: 120,
+        photo: '',
+        createdAt: new Date(Date.now() - 3600000 * 24 * 1.5).toISOString() // 1.5 days ago
+      },
+      {
+        id: 'mock-3',
+        name: 'Chloe Chen',
+        country: 'Canada',
+        hours: 15,
+        photo: '',
+        createdAt: new Date(Date.now() - 3600000 * 12).toISOString() // 12 hours ago
+      },
+      {
+        id: 'mock-4',
+        name: 'Yuki Tanaka',
+        country: 'Japan',
+        hours: 80,
+        photo: '',
+        createdAt: new Date(Date.now() - 3600000 * 2).toISOString() // 2 hours ago
+      },
+      {
+        id: 'mock-5',
+        name: 'Aarav Patel',
+        country: 'India',
+        hours: 350,
+        photo: '',
+        createdAt: new Date(Date.now() - 600000).toISOString() // 10 mins ago
+      }
+    ];
+
+    function loadDatabase() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          profiles = JSON.parse(stored);
+        } catch(e) {
+          profiles = [];
+        }
+      } else {
+        // Pre-populate mock data on first load
+        profiles = [...MOCK_PROFILES];
+        saveDatabase();
+      }
+    }
+
+    function saveDatabase() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+    }
+
+    // ==================== APP CONTROLLER ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadDatabase();
+      initTabs();
+      initFormHandlers();
+      initNumberSteppers();
+      initPhotoUpload();
+      initAuthHandlers();
+      initAdminPanel();
+    });
+
+    // ==================== TABS SWITCHER LOGIC ====================
+    let currentTab = 'form'; // 'form' or 'admin'
+
+    function initTabs() {
+      const tabFormBtn = document.getElementById('tab-form');
+      const tabAdminBtn = document.getElementById('tab-admin');
+      const logoBtn = document.getElementById('logo-btn');
+
+      function switchTab(tab) {
+        currentTab = tab;
+        
+        // Update Navbar button styles
+        if (tab === 'form') {
+          tabFormBtn.classList.add('active');
+          tabAdminBtn.classList.remove('active');
+          document.getElementById('section-form').classList.add('active');
+          document.getElementById('section-admin-login').classList.remove('active');
+          document.getElementById('section-admin-dashboard').classList.remove('active');
+        } else {
+          tabFormBtn.classList.remove('active');
+          tabAdminBtn.classList.add('active');
+          
+          // Check authentication
+          const isAuthenticated = sessionStorage.getItem(SESSION_AUTH_KEY) === 'true';
+          document.getElementById('section-form').classList.remove('active');
+          if (isAuthenticated) {
+            document.getElementById('section-admin-login').classList.remove('active');
+            document.getElementById('section-admin-dashboard').classList.add('active');
+            renderAdminDashboard();
+          } else {
+            document.getElementById('section-admin-login').classList.add('active');
+            document.getElementById('section-admin-dashboard').classList.remove('active');
+          }
+        }
+      }
+
+      tabFormBtn.addEventListener('click', () => switchTab('form'));
+      tabAdminBtn.addEventListener('click', () => switchTab('admin'));
+      logoBtn.addEventListener('click', () => switchTab('form'));
+    }
+
+    // ==================== TOAST CONTROLLER ====================
+    let toastTimeout;
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toast-text');
+      
+      text.textContent = message;
+      
+      if (isError) {
+        toast.style.borderColor = 'var(--error)';
+        toast.style.borderLeftColor = 'var(--error)';
+        toast.querySelector('.toast-icon').style.color = 'var(--error)';
+        toast.querySelector('.toast-icon').innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+      } else {
+        toast.style.borderColor = 'var(--accent)';
+        toast.style.borderLeftColor = 'var(--accent)';
+        toast.querySelector('.toast-icon').style.color = 'var(--accent)';
+        toast.querySelector('.toast-icon').innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+      }
+
+      toast.classList.add('show');
+      
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4000);
+    }
+
+    // ==================== CUSTOM NUMBER STEPPERS ====================
+    function initNumberSteppers() {
+      // Main public form
+      const hoursInput = document.getElementById('hours');
+      const incBtn = document.getElementById('inc-btn');
+      const decBtn = document.getElementById('dec-btn');
+
+      incBtn.addEventListener('click', () => {
+        const val = parseInt(hoursInput.value) || 0;
+        if (val < 9999) hoursInput.value = val + 1;
+        hoursInput.dispatchEvent(new Event('input'));
+      });
+
+      decBtn.addEventListener('click', () => {
+        const val = parseInt(hoursInput.value) || 0;
+        if (val > 0) hoursInput.value = val - 1;
+        hoursInput.dispatchEvent(new Event('input'));
+      });
+
+      // Handle keyboard arrow keys when focused
+      hoursInput.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const val = parseInt(hoursInput.value) || 0;
+          if (val < 9999) hoursInput.value = val + 1;
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const val = parseInt(hoursInput.value) || 0;
+          if (val > 0) hoursInput.value = val - 1;
+        }
+      });
+
+      // Edit Modal Form Stepper
+      const editHoursInput = document.getElementById('edit-hours');
+      const editIncBtn = document.getElementById('edit-inc-btn');
+      const editDecBtn = document.getElementById('edit-dec-btn');
+
+      editIncBtn.addEventListener('click', () => {
+        const val = parseInt(editHoursInput.value) || 0;
+        if (val < 9999) editHoursInput.value = val + 1;
+      });
+
+      editDecBtn.addEventListener('click', () => {
+        const val = parseInt(editHoursInput.value) || 0;
+        if (val > 0) editHoursInput.value = val - 1;
+      });
+    }
+
+    // ==================== PHOTO UPLOAD ENGINE ====================
+    let uploadedPhotoBase64 = "";
+
+    function initPhotoUpload() {
+      const fileInput = document.getElementById('photo-input');
+      const dropzone = document.getElementById('upload-dropzone');
+      const previewWrap = document.getElementById('upload-preview-wrap');
+      const previewImg = document.getElementById('upload-preview-img');
+      const filenameLabel = document.getElementById('upload-preview-filename');
+      const filesizeLabel = document.getElementById('upload-preview-filesize');
+      const removeBtn = document.getElementById('upload-remove-btn');
+      const photoGroup = document.getElementById('group-photo');
+
+      function validateAndPreviewFile(file) {
+        // Reset photo errors
+        photoGroup.classList.remove('has-error');
+        
+        if (!file) return;
+
+        // Verify format (PNG, JPG, WEBP)
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          document.getElementById('photo-error-txt').textContent = "Supported formats are PNG, JPG, and WEBP only.";
+          photoGroup.classList.add('has-error');
+          clearUploadedPhoto();
+          return;
+        }
+
+        // Verify size limit (5MB = 5 * 1024 * 1024 bytes)
+        const maxBytes = 5 * 1024 * 1024;
+        if (file.size > maxBytes) {
+          document.getElementById('photo-error-txt').textContent = "File exceeds the 5MB size limit.";
+          photoGroup.classList.add('has-error');
+          clearUploadedPhoto();
+          return;
+        }
+
+        // Generate base64 string & render preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          uploadedPhotoBase64 = e.target.result;
+          previewImg.src = uploadedPhotoBase64;
+          filenameLabel.textContent = file.name;
+          filesizeLabel.textContent = formatBytes(file.size);
+          
+          dropzone.style.display = 'none';
+          previewWrap.style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function clearUploadedPhoto() {
+        uploadedPhotoBase64 = "";
+        fileInput.value = "";
+        previewImg.src = "";
+        filenameLabel.textContent = "";
+        filesizeLabel.textContent = "";
+        
+        dropzone.style.display = 'flex';
+        previewWrap.style.display = 'none';
+      }
+
+      // Format bytes into readable string
+      function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = 1;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+      }
+
+      // Event Listeners
+      fileInput.addEventListener('change', function() {
+        validateAndPreviewFile(this.files[0]);
+      });
+
+      // Drag and Drop
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('drag-over');
+      });
+
+      dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('drag-over');
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('drag-over');
+        
+        if (e.dataTransfer.files.length > 0) {
+          const file = e.dataTransfer.files[0];
+          fileInput.files = e.dataTransfer.files;
+          validateAndPreviewFile(file);
+        }
+      });
+
+      removeBtn.addEventListener('click', () => {
+        clearUploadedPhoto();
+      });
+
+      // Export file utility to global
+      window.clearMainFormUpload = clearUploadedPhoto;
+    }
+
+    // ==================== CLIENT-SIDE FORM VALIDATION ====================
+    function initFormHandlers() {
+      const form = document.getElementById('profile-form');
+      const submitBtn = document.getElementById('form-submit-btn');
+      const spinner = document.getElementById('form-spinner');
+      const btnText = document.getElementById('form-btn-text');
+
+      // Inputs to listen on
+      const nameInput = document.getElementById('name');
+      const countrySelect = document.getElementById('country');
+      const hoursInput = document.getElementById('hours');
+
+      // Helper to clear error state on typing
+      nameInput.addEventListener('input', () => document.getElementById('group-name').classList.remove('has-error'));
+      countrySelect.addEventListener('change', () => document.getElementById('group-country').classList.remove('has-error'));
+      hoursInput.addEventListener('input', () => document.getElementById('group-hours').classList.remove('has-error'));
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        let isValid = true;
+
+        // 1. Validate Full Name
+        const nameVal = nameInput.value.trim();
+        const groupName = document.getElementById('group-name');
+        const errNameSpan = document.getElementById('error-name').querySelector('span');
+
+        if (!nameVal) {
+          errNameSpan.textContent = "Full name is required.";
+          groupName.classList.add('has-error');
+          isValid = false;
+        } else if (nameVal.length > 100) {
+          errNameSpan.textContent = "Name cannot exceed 100 characters.";
+          groupName.classList.add('has-error');
+          isValid = false;
+        } else if (/^\d+$/.test(nameVal)) {
+          errNameSpan.textContent = "Name cannot consist of numbers only.";
+          groupName.classList.add('has-error');
+          isValid = false;
+        } else {
+          groupName.classList.remove('has-error');
+        }
+
+        // 2. Validate Country
+        const countryVal = countrySelect.value;
+        const groupCountry = document.getElementById('group-country');
+        if (!countryVal) {
+          groupCountry.classList.add('has-error');
+          isValid = false;
+        } else {
+          groupCountry.classList.remove('has-error');
+        }
+
+        // 3. Validate Hours
+        const hoursVal = hoursInput.value.trim();
+        const groupHours = document.getElementById('group-hours');
+        const errHoursSpan = document.getElementById('error-hours').querySelector('span');
+        const hoursNum = parseInt(hoursVal);
+
+        if (hoursVal === "") {
+          errHoursSpan.textContent = "Number of hours is required.";
+          groupHours.classList.add('has-error');
+          isValid = false;
+        } else if (isNaN(hoursNum) || hoursNum < 0 || hoursNum > 9999) {
+          errHoursSpan.textContent = "Hours must be an integer between 0 and 9999.";
+          groupHours.classList.add('has-error');
+          isValid = false;
+        } else {
+          groupHours.classList.remove('has-error');
+        }
+
+        // Break if validation fails
+        if (!isValid) {
+          showToast("Please fix the validation errors before submitting.", true);
+          return;
+        }
+
+        // Disable submit button and trigger loading spinner
+        submitBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        btnText.textContent = "Submitting...";
+
+        // Simulate network API submission (1.2s delay for feedback visual)
+        setTimeout(() => {
+          // Construct entry
+          const newProfile = {
+            id: 'profile-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+            name: nameVal,
+            country: countryVal,
+            hours: hoursNum,
+            photo: uploadedPhotoBase64,
+            createdAt: new Date().toISOString()
+          };
+
+          // Save to database list
+          profiles.unshift(newProfile); // Prepend so it appears at top of lists
+          saveDatabase();
+
+          // Reset submit state
+          submitBtn.disabled = false;
+          spinner.style.display = 'none';
+          btnText.textContent = "Submit Profile";
+
+          // Clear form inputs
+          form.reset();
+          if (window.clearMainFormUpload) window.clearMainFormUpload();
+
+          // Show Toast notification
+          showToast("Profile submitted successfully. Thank you!");
+        }, 1200);
+      });
+    }
+
+    // ==================== ADMIN SIMULATED AUTHENTICATION ====================
+    function initAuthHandlers() {
+      const loginForm = document.getElementById('admin-login-form');
+      const userInput = document.getElementById('auth-username');
+      const passInput = document.getElementById('auth-password');
+
+      userInput.addEventListener('input', () => document.getElementById('group-auth-user').classList.remove('has-error'));
+      passInput.addEventListener('input', () => document.getElementById('group-auth-pass').classList.remove('has-error'));
+
+      // Email validation regex
+      function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      }
+
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        let isValid = true;
+        const uVal = userInput.value.trim();
+        const pVal = passInput.value;
+
+        if (!uVal) {
+          document.getElementById('group-auth-user').classList.add('has-error');
+          isValid = false;
+        } else if (!isValidEmail(uVal)) {
+          document.getElementById('error-auth-user').querySelector('span').textContent = "Please enter a valid email address.";
+          document.getElementById('group-auth-user').classList.add('has-error');
+          isValid = false;
+        } else {
+          document.getElementById('error-auth-user').querySelector('span').textContent = "Username is required.";
+        }
+        if (!pVal) {
+          document.getElementById('group-auth-pass').classList.add('has-error');
+          isValid = false;
+        }
+
+        if (!isValid) return;
+
+        // Credentials verification (Simulated)
+        if (uVal.toLowerCase() === 'promisechuks197@gmail.com' && pVal === 'prodigy08?') {
+          // Success
+          sessionStorage.setItem(SESSION_AUTH_KEY, 'true');
+          
+          // Clear credentials form fields
+          userInput.value = '';
+          passInput.value = '';
+
+          // Transition screen
+          document.getElementById('section-admin-login').classList.remove('active');
+          document.getElementById('section-admin-dashboard').classList.add('active');
+          
+          showToast("Welcome back, Administrator!");
+          renderAdminDashboard();
+        } else {
+          // Authentication Fail
+          showToast("Incorrect email or password. Please try again.", true);
+          document.getElementById('group-auth-pass').classList.add('has-error');
+        }
+      });
+
+      // Admin Logout
+      document.getElementById('btn-admin-logout').addEventListener('click', () => {
+        sessionStorage.removeItem(SESSION_AUTH_KEY);
+        document.getElementById('section-admin-dashboard').classList.remove('active');
+        document.getElementById('section-admin-login').classList.add('active');
+        showToast("Signed out successfully.");
+      });
+    }
+
+    // ==================== ADMIN DASHBOARD ENGINE ====================
+    let filteredProfiles = [];
+    let currentPage = 1;
+    const itemsPerPage = 6;
+
+    function initAdminPanel() {
+      // Inputs
+      const searchInput = document.getElementById('admin-search-input');
+      const countryFilter = document.getElementById('admin-filter-country');
+      const resetDbBtn = document.getElementById('btn-reset-db');
+      const loadMockEmptyBtn = document.getElementById('btn-load-mock-empty');
+      const exportCsvBtn = document.getElementById('btn-export-csv');
+
+      // Prev & Next Buttons
+      const prevBtn = document.getElementById('btn-page-prev');
+      const nextBtn = document.getElementById('btn-page-next');
+
+      // Search & Filters inputs
+      searchInput.addEventListener('input', () => {
+        currentPage = 1;
+        applyFiltersAndRender();
+      });
+
+      countryFilter.addEventListener('change', () => {
+        currentPage = 1;
+        applyFiltersAndRender();
+      });
+
+      // Pagination events
+      prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderProfileGrid();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredProfiles.length / itemsPerPage);
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderProfileGrid();
+        }
+      });
+
+      // Reset Database
+      resetDbBtn.addEventListener('click', () => {
+        if (confirm("Warning: This will delete all user-submitted profiles and reset the system. Continue?")) {
+          profiles = [];
+          saveDatabase();
+          currentPage = 1;
+          renderAdminDashboard();
+          showToast("Database has been reset.");
+        }
+      });
+
+      // Load Mock Profiles (if empty)
+      loadMockEmptyBtn.addEventListener('click', () => {
+        profiles = [...MOCK_PROFILES];
+        saveDatabase();
+        renderAdminDashboard();
+        showToast("Mock profiles loaded successfully.");
+      });
+
+      // Export CSV
+      exportCsvBtn.addEventListener('click', () => {
+        exportToCSV();
+      });
+
+      // Modal Edit submission
+      document.getElementById('modal-edit-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        submitEditProfile();
+      });
+
+      // Edit Steppers keydown validation
+      const modalHoursInput = document.getElementById('edit-hours');
+      modalHoursInput.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const val = parseInt(modalHoursInput.value) || 0;
+          if (val < 9999) modalHoursInput.value = val + 1;
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const val = parseInt(modalHoursInput.value) || 0;
+          if (val > 0) modalHoursInput.value = val - 1;
+        }
+      });
+
+      // Modal Delete confirmation
+      document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+        submitDeleteProfile();
+      });
+    }
+
+    function renderAdminDashboard() {
+      // 1. Update KPI Card Statistics
+      calculateKPIs();
+
+      // 2. Populate Country filter select element in table toolbar
+      populateCountryFilterOptions();
+
+      // 3. Render Visual Distribution Charts
+      renderCharts();
+
+      // 4. Filter and display profiles grid
+      applyFiltersAndRender();
+    }
+
+    function calculateKPIs() {
+      const count = profiles.length;
+      document.getElementById('kpi-total').textContent = count;
+
+      // Avg Hours
+      let avg = 0;
+      if (count > 0) {
+        const totalHours = profiles.reduce((sum, p) => sum + p.hours, 0);
+        avg = Math.round(totalHours / count);
+      }
+      document.getElementById('kpi-avg-hours').textContent = avg + 'h';
+
+      // Photo upload rate
+      let photoRate = 0;
+      if (count > 0) {
+        const withPhoto = profiles.filter(p => p.photo && p.photo !== "").length;
+        photoRate = Math.round((withPhoto / count) * 100);
+      }
+      document.getElementById('kpi-photo-rate').textContent = photoRate + '%';
+
+      // Top represented country
+      let topCountry = "-";
+      if (count > 0) {
+        const countryCounts = {};
+        profiles.forEach(p => {
+          countryCounts[p.country] = (countryCounts[p.country] || 0) + 1;
+        });
+        
+        let max = 0;
+        for (const country in countryCounts) {
+          if (countryCounts[country] > max) {
+            max = countryCounts[country];
+            topCountry = `${country} (${max})`;
+          }
+        }
+      }
+      document.getElementById('kpi-top-country').textContent = topCountry;
+    }
+
+    function populateCountryFilterOptions() {
+      const countryFilter = document.getElementById('admin-filter-country');
+      const prevSelected = countryFilter.value;
+      
+      // Get unique countries in the dataset
+      const uniqueCountries = [...new Set(profiles.map(p => p.country))].sort();
+
+      // Keep "All Countries" option
+      countryFilter.innerHTML = '<option value="">All Countries</option>';
+      
+      uniqueCountries.forEach(country => {
+        const opt = document.createElement('option');
+        opt.value = country;
+        opt.textContent = country;
+        countryFilter.appendChild(opt);
+      });
+
+      // Restore selection if exists
+      if (uniqueCountries.includes(prevSelected)) {
+        countryFilter.value = prevSelected;
+      }
+    }
+
+    function renderCharts() {
+      const count = profiles.length;
+
+      // A. Hours Distribution bar chart calculations
+      // Brackets: 0-10, 11-50, 51-100, 101-500, 501+
+      const brackets = [0, 0, 0, 0, 0];
+      profiles.forEach(p => {
+        if (p.hours <= 10) brackets[0]++;
+        else if (p.hours <= 50) brackets[1]++;
+        else if (p.hours <= 100) brackets[2]++;
+        else if (p.hours <= 500) brackets[3]++;
+        else brackets[4]++;
+      });
+
+      const maxBracket = Math.max(...brackets, 1);
+      const fills = document.querySelectorAll('#hours-bar-chart .bar-fill');
+      const values = document.querySelectorAll('#hours-bar-chart .bar-value');
+
+      brackets.forEach((val, idx) => {
+        const percent = count > 0 ? (val / maxBracket) * 100 : 0;
+        fills[idx].style.width = percent + '%';
+        values[idx].textContent = val;
+      });
+
+      // B. Country Ranking List
+      const countryChartList = document.getElementById('country-rank-list');
+      countryChartList.innerHTML = '';
+
+      if (count === 0) {
+        countryChartList.innerHTML = '<div class="country-row" style="border-style:dashed; text-align:center; display:block; color:var(--muted)">No countries represented</div>';
+        return;
+      }
+
+      const countryCounts = {};
+      profiles.forEach(p => {
+        countryCounts[p.country] = (countryCounts[p.country] || 0) + 1;
+      });
+
+      // Sort countries by count
+      const sortedCountries = Object.keys(countryCounts).map(name => ({
+        name: name,
+        count: countryCounts[name]
+      })).sort((a, b) => b.count - a.count);
+
+      sortedCountries.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'country-row';
+        row.innerHTML = `
+          <span class="country-name">${item.name}</span>
+          <span class="country-count-badge">${item.count} ${item.count === 1 ? 'profile' : 'profiles'}</span>
+        `;
+        countryChartList.appendChild(row);
+      });
+    }
+
+    function applyFiltersAndRender() {
+      const searchVal = document.getElementById('admin-search-input').value.toLowerCase().trim();
+      const countryVal = document.getElementById('admin-filter-country').value;
+
+      filteredProfiles = profiles.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchVal);
+        const matchesCountry = countryVal === "" || p.country === countryVal;
+        return matchesSearch && matchesCountry;
+      });
+
+      renderProfileGrid();
+    }
+
+    function renderProfileGrid() {
+      const grid = document.getElementById('admin-profiles-grid');
+      const emptyState = document.getElementById('profiles-empty-state');
+      
+      grid.innerHTML = '';
+
+      const count = filteredProfiles.length;
+
+      if (count === 0) {
+        grid.appendChild(emptyState);
+        emptyState.style.display = 'block';
+        updatePaginationInfo(0, 0, 0);
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      // Page calculations
+      const totalPages = Math.ceil(count / itemsPerPage);
+      if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, count);
+      const pageItems = filteredProfiles.slice(startIndex, endIndex);
+
+      pageItems.forEach(profile => {
+        const card = document.createElement('div');
+        card.className = 'profile-card';
+        
+        // Avatar element check
+        let avatarHTML = '';
+        if (profile.photo && profile.photo !== "") {
+          avatarHTML = `<img class="card-avatar" src="${profile.photo}" alt="${profile.name}"/>`;
+        } else {
+          // Initials avatar
+          const initials = profile.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() || '?';
+          avatarHTML = `<div class="card-initials-avatar">${initials}</div>`;
+        }
+
+        // Parse date
+        const formattedDate = new Date(profile.createdAt).toLocaleDateString(undefined, {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+
+        card.innerHTML = `
+          <div>
+            <div class="card-top">
+              ${avatarHTML}
+              <div class="card-details">
+                <span class="card-name" title="${profile.name}">${profile.name}</span>
+                <span class="card-country" title="${profile.country}">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  ${profile.country}
+                </span>
+              </div>
+            </div>
+            
+            <div class="card-divider"></div>
+            
+            <div class="card-stats">
+              <span class="hours-badge">${profile.hours} hours</span>
+              <span class="card-date" title="Submitted at ${new Date(profile.createdAt).toLocaleTimeString()}">${formattedDate}</span>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button type="button" class="icon-btn btn-edit" title="Edit Profile" onclick="openEditModal('${profile.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </button>
+            <button type="button" class="icon-btn btn-delete" title="Delete Profile" onclick="openDeleteModal('${profile.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      updatePaginationInfo(startIndex + 1, endIndex, count);
+
+      // Manage enable/disable buttons
+      document.getElementById('btn-page-prev').disabled = (currentPage === 1);
+      document.getElementById('btn-page-next').disabled = (currentPage === totalPages || totalPages === 0);
+    }
+
+    function updatePaginationInfo(start, end, total) {
+      document.getElementById('pagination-info').textContent = `Showing ${start}-${end} of ${total} entries`;
+    }
+
+    // ==================== EDIT PROFILE DIALOG MODAL ====================
+    window.openEditModal = function(id) {
+      const p = profiles.find(profile => profile.id === id);
+      if (!p) return;
+
+      document.getElementById('edit-profile-id').value = p.id;
+      document.getElementById('edit-name').value = p.name;
+      document.getElementById('edit-country').value = p.country;
+      document.getElementById('edit-hours').value = p.hours;
+      
+      const avatarPreview = document.getElementById('edit-avatar-preview');
+      const clearBtn = document.getElementById('edit-clear-photo-btn');
+      const statusLabel = document.getElementById('edit-photo-status');
+      
+      // Update avatar modal fields
+      if (p.photo && p.photo !== "") {
+        avatarPreview.src = p.photo;
+        avatarPreview.style.display = 'block';
+        clearBtn.style.display = 'inline-block';
+        statusLabel.textContent = "Has custom profile photo";
+      } else {
+        const initials = p.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() || '?';
+        avatarPreview.style.display = 'none';
+        clearBtn.style.display = 'none';
+        statusLabel.textContent = `No photo uploaded (Initials: ${initials})`;
+      }
+
+      // Reset validation error classes
+      document.getElementById('edit-group-name').classList.remove('has-error');
+      document.getElementById('edit-group-country').classList.remove('has-error');
+      document.getElementById('edit-group-hours').classList.remove('has-error');
+
+      // Bind dynamic remove button inside edit modal
+      clearBtn.onclick = function() {
+        if (confirm("Remove profile image?")) {
+          p.photo = "";
+          saveDatabase();
+          avatarPreview.style.display = 'none';
+          clearBtn.style.display = 'none';
+          statusLabel.textContent = "Photo removed.";
+          renderAdminDashboard();
+        }
+      };
+
+      openModal('modal-edit');
+    };
+
+    function submitEditProfile() {
+      const id = document.getElementById('edit-profile-id').value;
+      const p = profiles.find(profile => profile.id === id);
+      if (!p) return;
+
+      const nameVal = document.getElementById('edit-name').value.trim();
+      const countryVal = document.getElementById('edit-country').value;
+      const hoursVal = document.getElementById('edit-hours').value.trim();
+      
+      let isValid = true;
+
+      // Validate name
+      const groupName = document.getElementById('edit-group-name');
+      const errNameSpan = document.getElementById('edit-error-name').querySelector('span');
+      if (!nameVal) {
+        errNameSpan.textContent = "Full name is required.";
+        groupName.classList.add('has-error');
+        isValid = false;
+      } else if (nameVal.length > 100) {
+        errNameSpan.textContent = "Name cannot exceed 100 characters.";
+        groupName.classList.add('has-error');
+        isValid = false;
+      } else if (/^\d+$/.test(nameVal)) {
+        errNameSpan.textContent = "Name cannot consist of numbers only.";
+        groupName.classList.add('has-error');
+        isValid = false;
+      } else {
+        groupName.classList.remove('has-error');
+      }
+
+      // Validate Country
+      const groupCountry = document.getElementById('edit-group-country');
+      if (!countryVal) {
+        groupCountry.classList.add('has-error');
+        isValid = false;
+      } else {
+        groupCountry.classList.remove('has-error');
+      }
+
+      // Validate Hours
+      const groupHours = document.getElementById('edit-group-hours');
+      const errHoursSpan = document.getElementById('edit-error-hours').querySelector('span');
+      const hoursNum = parseInt(hoursVal);
+      if (hoursVal === "") {
+        errHoursSpan.textContent = "Hours is required.";
+        groupHours.classList.add('has-error');
+        isValid = false;
+      } else if (isNaN(hoursNum) || hoursNum < 0 || hoursNum > 9999) {
+        errHoursSpan.textContent = "Hours must be between 0 and 9999.";
+        groupHours.classList.add('has-error');
+        isValid = false;
+      } else {
+        groupHours.classList.remove('has-error');
+      }
+
+      if (!isValid) return;
+
+      // Update data
+      p.name = nameVal;
+      p.country = countryVal;
+      p.hours = hoursNum;
+      
+      saveDatabase();
+      closeModal('modal-edit');
+      renderAdminDashboard();
+      showToast(`Updated ${nameVal}'s profile details.`);
+    }
+
+    // ==================== DELETE PROFILE DIALOG MODAL ====================
+    window.openDeleteModal = function(id) {
+      const p = profiles.find(profile => profile.id === id);
+      if (!p) return;
+
+      document.getElementById('delete-profile-id').value = p.id;
+      document.getElementById('delete-profile-name').textContent = p.name;
+      openModal('modal-delete');
+    };
+
+    function submitDeleteProfile() {
+      const id = document.getElementById('delete-profile-id').value;
+      const index = profiles.findIndex(p => p.id === id);
+      if (index === -1) return;
+
+      const name = profiles[index].name;
+      profiles.splice(index, 1);
+      saveDatabase();
+
+      closeModal('modal-delete');
+      renderAdminDashboard();
+      showToast(`Deleted profile record for ${name}.`);
+    }
+
+    // ==================== GENERAL MODAL WINDOW UTILS ====================
+    function openModal(modalId) {
+      const backdrop = document.getElementById(modalId);
+      backdrop.style.display = 'flex';
+      setTimeout(() => backdrop.classList.add('show'), 10);
+    }
+
+    window.closeModal = function(modalId) {
+      const backdrop = document.getElementById(modalId);
+      backdrop.classList.remove('show');
+      setTimeout(() => backdrop.style.display = 'none', 300);
+    };
+
+    // Close on backdrop click
+    window.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal-backdrop')) {
+        closeModal(e.target.id);
+      }
+    });
+
+    // ==================== EXPORT DATA CSV UTILITY ====================
+    function exportToCSV() {
+      if (profiles.length === 0) {
+        showToast("No profiles available to export.", true);
+        return;
+      }
+
+      // CSV Header
+      let csvContent = "data:text/csv;charset=utf-8,ID,Full Name,Country,Hours,Submission Date\n";
+
+      // CSV Body rows
+      profiles.forEach(p => {
+        // Escape quotes in names/countries if any
+        const safeName = p.name.replace(/"/g, '""');
+        const safeCountry = p.country.replace(/"/g, '""');
+        
+        csvContent += `"${p.id}","${safeName}","${safeCountry}",${p.hours},"${p.createdAt}"\n`;
+      });
+
+      // Trigger browser download anchor
+      const encodedUri = encodeURI(csvContent);
+      const downloadAnchor = document.createElement("a");
+      downloadAnchor.setAttribute("href", encodedUri);
+      downloadAnchor.setAttribute("download", `aura_profiles_export_${Date.now()}.csv`);
+      document.body.appendChild(downloadAnchor);
+      
+      downloadAnchor.click();
+      document.body.removeChild(downloadAnchor);
+
+      showToast("CSV file exported successfully!");
+    }
+  </script>
+</body>
+</html>
