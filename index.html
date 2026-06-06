@@ -2315,6 +2315,34 @@
     </div>
   </div>
 
+  <!-- ==================== DIALOG MODAL 3: RESET DATA CONFIRM ==================== -->
+  <div class="modal-backdrop" id="modal-reset">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3>Reset All Data?</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('modal-reset')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; align-items:center; gap:1rem; padding:1rem; background:rgba(224, 108, 117, 0.08); border:1px solid rgba(224, 108, 117, 0.25); border-radius:10px; margin-bottom:1.2rem;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e06c75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div>
+            <div style="font-weight:600; color:var(--text); font-size:0.92rem; margin-bottom:0.2rem;">Warning: This is a destructive action</div>
+            <div style="font-size:0.8rem; color:var(--muted);">All submitted profiles will be permanently erased.</div>
+          </div>
+        </div>
+        <p class="modal-delete-text">
+          You are about to delete <strong id="reset-profile-count">0</strong> profile(s) from the database.<br/>
+          <span style="font-size: 0.78rem; display:block; margin-top: 0.5rem;">Type <strong style="color: var(--error);">RESET</strong> below to confirm:</span>
+        </p>
+        <input type="text" id="reset-confirm-input" placeholder="Type RESET to confirm" autocomplete="off" style="margin-top: 0.8rem; width:100%; background:var(--input-bg); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:sans-serif; font-size:0.9rem; padding:0.7rem 1rem; outline:none; transition:var(--transition);"/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-action" onclick="closeModal('modal-reset')">Cancel</button>
+        <button type="button" class="btn-danger" id="btn-confirm-reset" disabled>Reset Everything</button>
+      </div>
+    </div>
+  </div>
+
   <!-- JavaScript Application Logic -->
   <script>
     // ==================== DATA STORE & LOCAL STORAGE MANAGER ====================
@@ -2842,15 +2870,39 @@
         }
       });
 
-      // Reset Database
+      // Reset Database - opens confirmation modal
       resetDbBtn.addEventListener('click', () => {
-        if (confirm("Warning: This will delete all user-submitted profiles and reset the system. Continue?")) {
-          profiles = [];
-          saveDatabase();
-          currentPage = 1;
-          renderAdminDashboard();
-          showToast("Database has been reset.");
+        if (profiles.length === 0) {
+          showToast("Database is already empty.", true);
+          return;
         }
+        document.getElementById('reset-profile-count').textContent = profiles.length;
+        const confirmInput = document.getElementById('reset-confirm-input');
+        confirmInput.value = '';
+        document.getElementById('btn-confirm-reset').disabled = true;
+        openModal('modal-reset');
+        setTimeout(() => confirmInput.focus(), 100);
+      });
+
+      // Enable confirm button only when "RESET" is typed
+      const resetConfirmInput = document.getElementById('reset-confirm-input');
+      resetConfirmInput.addEventListener('input', (e) => {
+        const isValid = e.target.value.trim().toUpperCase() === 'RESET';
+        document.getElementById('btn-confirm-reset').disabled = !isValid;
+      });
+
+      // Confirm reset action
+      document.getElementById('btn-confirm-reset').addEventListener('click', () => {
+        const count = profiles.length;
+        profiles = [];
+        saveDatabase();
+        currentPage = 1;
+        currentPage = 1;
+        document.getElementById('admin-search-input').value = '';
+        document.getElementById('admin-filter-country').value = '';
+        closeModal('modal-reset');
+        renderAdminDashboard();
+        showToast(`Successfully reset database. ${count} profile(s) deleted.`);
       });
 
       // Export CSV
