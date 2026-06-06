@@ -2685,16 +2685,16 @@
         const hoursVal = hoursInput.value.trim();
         const minutesVal = minutesInput.value.trim();
         const secondsVal = secondsInput.value.trim();
-        const hoursNum = parseInt(hoursVal);
-        const minutesNum = parseInt(minutesVal);
-        const secondsNum = parseInt(secondsVal);
+        const hoursNum = hoursVal === "" ? 0 : parseInt(hoursVal);
+        const minutesNum = minutesVal === "" ? 0 : parseInt(minutesVal);
+        const secondsNum = secondsVal === "" ? 0 : parseInt(secondsVal);
         const allEmpty = hoursVal === "" && minutesVal === "" && secondsVal === "";
 
         if (allEmpty) {
           errHoursSpan.textContent = "Time is required. Please fill at least one field.";
           groupHours.classList.add('has-error');
           isValid = false;
-        } else if (isNaN(hoursNum) || hoursNum < 0 || hoursNum > 9999) {
+        } else if (hoursVal !== "" && (isNaN(hoursNum) || hoursNum < 0 || hoursNum > 9999)) {
           errHoursSpan.textContent = "Hours must be an integer between 0 and 9999.";
           groupHours.classList.add('has-error');
           isValid = false;
@@ -2733,8 +2733,8 @@
             name: nameVal,
             country: countryVal,
             hours: hoursNum,
-            minutes: isNaN(minutesNum) ? 0 : minutesNum,
-            seconds: isNaN(secondsNum) ? 0 : secondsNum,
+            minutes: minutesNum,
+            seconds: secondsNum,
             photo: uploadedPhotoBase64,
             createdAt: new Date().toISOString()
           };
@@ -2751,6 +2751,12 @@
           // Clear form inputs
           form.reset();
           if (window.clearMainFormUpload) window.clearMainFormUpload();
+
+          // If admin dashboard is currently active, refresh it so the new data shows up
+          const adminDashboard = document.getElementById('section-admin-dashboard');
+          if (adminDashboard.classList.contains('active')) {
+            renderAdminDashboard();
+          }
 
           // Show Toast notification
           showToast("Profile submitted successfully. Thank you!");
@@ -3264,16 +3270,16 @@
       // Validate Time
       const groupHours = document.getElementById('edit-group-hours');
       const errHoursSpan = document.getElementById('edit-error-hours').querySelector('span');
-      const hoursNum = parseInt(hoursVal);
-      const minutesNum = parseInt(minutesVal);
-      const secondsNum = parseInt(secondsVal);
+      const hoursNum = hoursVal === "" ? 0 : parseInt(hoursVal);
+      const minutesNum = minutesVal === "" ? 0 : parseInt(minutesVal);
+      const secondsNum = secondsVal === "" ? 0 : parseInt(secondsVal);
       const allEmpty = hoursVal === "" && minutesVal === "" && secondsVal === "";
 
       if (allEmpty) {
         errHoursSpan.textContent = "Time is required. Please fill at least one field.";
         groupHours.classList.add('has-error');
         isValid = false;
-      } else if (isNaN(hoursNum) || hoursNum < 0 || hoursNum > 9999) {
+      } else if (hoursVal !== "" && (isNaN(hoursNum) || hoursNum < 0 || hoursNum > 9999)) {
         errHoursSpan.textContent = "Hours must be an integer between 0 and 9999.";
         groupHours.classList.add('has-error');
         isValid = false;
@@ -3299,8 +3305,8 @@
       p.name = nameVal;
       p.country = countryVal;
       p.hours = hoursNum;
-      p.minutes = isNaN(minutesNum) ? 0 : minutesNum;
-      p.seconds = isNaN(secondsNum) ? 0 : secondsNum;
+      p.minutes = minutesNum;
+      p.seconds = secondsNum;
       
       saveDatabase();
       closeModal('modal-edit');
