@@ -2358,10 +2358,23 @@
     const SESSION_AUTH_KEY = 'aura_admin_logged_in';
     const SUPABASE_TABLE = 'profiles';
 
-    // Initialize Supabase client
+    // Initialize Supabase client (wrapped safely so app works even if Supabase fails)
     const SUPABASE_URL = 'https://fwedxdewktimqfzrbmja.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_nlQieThswZlJXTEmCuqA4Q_Ofg6k8Zc';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let supabase = null;
+    let supabaseReady = false;
+    try {
+      if (window.supabase && typeof window.supabase.createClient === 'function') {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+          auth: { persistSession: false, autoRefreshToken: false }
+        });
+        supabaseReady = true;
+      } else {
+        console.warn('Supabase JS not loaded. Running in localStorage-only mode.');
+      }
+    } catch (err) {
+      console.warn('Failed to init Supabase client:', err.message);
+    }
 
     // Track online state
     let isOnline = navigator.onLine;
@@ -2418,6 +2431,10 @@
 
     // ==================== SUPABASE SYNC FUNCTIONS ====================
     async function fetchFromSupabase() {
+      if (!supabaseReady || !supabase) {
+        console.log('Supabase not ready, skipping fetch.');
+        return;
+      }
       try {
         const { data, error } = await supabase
           .from(SUPABASE_TABLE)
@@ -2434,11 +2451,12 @@
           }
         }
       } catch (err) {
-        console.warn('Supabase fetch failed, using local cache:', err.message);
+        console.warn('Supabase fetch failed, using local cache:', err.message || err);
       }
     }
 
     async function insertToSupabase(profile) {
+      if (!supabaseReady || !supabase) return { success: false, error: 'Supabase not ready' };
       try {
         const { data, error } = await supabase
           .from(SUPABASE_TABLE)
@@ -2455,12 +2473,13 @@
         if (error) throw error;
         return { success: true };
       } catch (err) {
-        console.warn('Supabase insert failed, saved locally only:', err.message);
+        console.warn('Supabase insert failed, saved locally only:', err.message || err);
         return { success: false, error: err.message };
       }
     }
 
     async function updateInSupabase(profile) {
+      if (!supabaseReady || !supabase) return { success: false };
       try {
         const { error } = await supabase
           .from(SUPABASE_TABLE)
@@ -2476,12 +2495,13 @@
         if (error) throw error;
         return { success: true };
       } catch (err) {
-        console.warn('Supabase update failed:', err.message);
+        console.warn('Supabase update failed:', err.message || err);
         return { success: false, error: err.message };
       }
     }
 
     async function deleteFromSupabase(id) {
+      if (!supabaseReady || !supabase) return { success: false };
       try {
         const { error } = await supabase
           .from(SUPABASE_TABLE)
@@ -2490,12 +2510,13 @@
         if (error) throw error;
         return { success: true };
       } catch (err) {
-        console.warn('Supabase delete failed:', err.message);
+        console.warn('Supabase delete failed:', err.message || err);
         return { success: false, error: err.message };
       }
     }
 
     async function clearSupabase() {
+      if (!supabaseReady || !supabase) return { success: false };
       try {
         const { error } = await supabase
           .from(SUPABASE_TABLE)
@@ -2504,13 +2525,13 @@
         if (error) throw error;
         return { success: true };
       } catch (err) {
-        console.warn('Supabase clear failed:', err.message);
+        console.warn('Supabase clear failed:', err.message || err);
         return { success: false, error: err.message };
       }
     }
 
     // Online/offline listeners
-    window.addEventListener('online', () => { isOnline = true; fetchFromSupabase(); });
+    window.addEventListener('online', () => { isOnline = true; if (supabaseReady) fetchFromSupabase(); });
     window.addEventListener('offline', () => { isOnline = false; });
 
     // ==================== APP CONTROLLER ====================
