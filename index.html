@@ -2367,11 +2367,11 @@
     // Initialize Supabase client (wrapped safely so app works even if Supabase fails)
     const SUPABASE_URL = 'https://fwedxdewktimqfzrbmja.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_nlQieThswZlJXTEmCuqA4Q_Ofg6k8Zc';
-    let supabase = null;
+    let supabaseClient = null;
     let supabaseReady = false;
     try {
       if (window.supabase && typeof window.supabase.createClient === 'function') {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
           auth: { persistSession: false, autoRefreshToken: false }
         });
         supabaseReady = true;
@@ -2437,12 +2437,12 @@
 
     // ==================== SUPABASE SYNC FUNCTIONS ====================
     async function fetchFromSupabase() {
-      if (!supabaseReady || !supabase) {
+      if (!supabaseReady || !supabaseClient) {
         console.log('Supabase not ready, skipping fetch.');
         return;
       }
       try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
           .from(SUPABASE_TABLE)
           .select('*')
           .order('created_at', { ascending: false });
@@ -2462,9 +2462,9 @@
     }
 
     async function insertToSupabase(profile) {
-      if (!supabaseReady || !supabase) return { success: false, error: 'Supabase not ready' };
+      if (!supabaseReady || !supabaseClient) return { success: false, error: 'Supabase not ready' };
       try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
           .from(SUPABASE_TABLE)
           .insert([{
             id: profile.id,
@@ -2485,9 +2485,9 @@
     }
 
     async function updateInSupabase(profile) {
-      if (!supabaseReady || !supabase) return { success: false };
+      if (!supabaseReady || !supabaseClient) return { success: false };
       try {
-        const { error } = await supabase
+        const { error } = await supabaseClient
           .from(SUPABASE_TABLE)
           .update({
             name: profile.name,
@@ -2507,9 +2507,9 @@
     }
 
     async function deleteFromSupabase(id) {
-      if (!supabaseReady || !supabase) return { success: false };
+      if (!supabaseReady || !supabaseClient) return { success: false };
       try {
-        const { error } = await supabase
+        const { error } = await supabaseClient
           .from(SUPABASE_TABLE)
           .delete()
           .eq('id', id);
@@ -2522,9 +2522,9 @@
     }
 
     async function clearSupabase() {
-      if (!supabaseReady || !supabase) return { success: false };
+      if (!supabaseReady || !supabaseClient) return { success: false };
       try {
-        const { error } = await supabase
+        const { error } = await supabaseClient
           .from(SUPABASE_TABLE)
           .delete()
           .neq('id', '___never___');
