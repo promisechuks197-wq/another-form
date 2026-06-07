@@ -2542,13 +2542,20 @@
 
     // ==================== APP CONTROLLER ====================
     document.addEventListener('DOMContentLoaded', () => {
-      loadDatabase();
-      initTabs();
-      initFormHandlers();
-      initNumberSteppers();
-      initPhotoUpload();
-      initAuthHandlers();
-      initAdminPanel();
+      // Global error display (helps diagnose issues on the page itself)
+      window.addEventListener('error', (e) => {
+        console.error('Runtime error:', e.error || e.message);
+      });
+      
+      try { loadDatabase(); } catch(e) { console.error('loadDatabase error:', e); }
+      try { initTabs(); } catch(e) { console.error('initTabs error:', e); }
+      try { initFormHandlers(); } catch(e) { console.error('initFormHandlers error:', e); }
+      try { initNumberSteppers(); } catch(e) { console.error('initNumberSteppers error:', e); }
+      try { initPhotoUpload(); } catch(e) { console.error('initPhotoUpload error:', e); }
+      try { initAuthHandlers(); } catch(e) { console.error('initAuthHandlers error:', e); }
+      try { initAdminPanel(); } catch(e) { console.error('initAdminPanel error:', e); }
+      
+      console.log('Aura app initialized. Supabase ready:', supabaseReady);
     });
 
     // ==================== TABS SWITCHER LOGIC ====================
@@ -3559,6 +3566,15 @@
 
       showToast("CSV file exported successfully!");
     }
+  </script>
+  <div id="err-display" style="position:fixed;bottom:0;left:0;right:0;background:#fee;border:2px solid red;padding:10px;z-index:99999;font-family:monospace;font-size:12px;max-height:200px;overflow:auto;display:none;"></div>
+  <script>
+    (function(){
+      const err = document.getElementById('err-display');
+      function show(m){ err.style.display='block'; err.textContent += m + '\n'; }
+      window.addEventListener('error', function(e){ show('JS ERROR: ' + e.message + ' (line ' + e.lineno + ')'); });
+      window.addEventListener('unhandledrejection', function(e){ show('PROMISE ERROR: ' + (e.reason && e.reason.message || e.reason)); });
+    })();
   </script>
 </body>
 </html>
