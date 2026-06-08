@@ -2418,25 +2418,16 @@
     }
 
     function loadDatabase() {
-      // Clear stale localStorage data if version doesn't match
-      const storedVersion = localStorage.getItem(STORAGE_VERSION_KEY);
-      if (storedVersion !== CURRENT_DATA_VERSION) {
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.setItem(STORAGE_VERSION_KEY, CURRENT_DATA_VERSION);
-        profiles = [];
-        console.log('Cleared stale localStorage data (version mismatch).');
-      } else {
-        // Only load from localStorage if version matches
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          try {
-            profiles = JSON.parse(stored).map(normalizeProfile);
-          } catch(e) {
-            profiles = [];
-          }
-        } else {
+      // Load from localStorage as immediate cache
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          profiles = JSON.parse(stored).map(normalizeProfile);
+        } catch(e) {
           profiles = [];
         }
+      } else {
+        profiles = [];
       }
       // Then fetch fresh from Supabase in background
       fetchFromSupabase();
