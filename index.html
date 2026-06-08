@@ -2361,6 +2361,8 @@
     // ==================== DATA STORE & SUPABASE CLIENT ====================
     let profiles = [];
     const STORAGE_KEY = 'aura_user_profiles';
+    const STORAGE_VERSION_KEY = 'aura_data_version';
+    const CURRENT_DATA_VERSION = '2'; // Bump this to auto-clear stale localStorage data
     const SESSION_AUTH_KEY = 'aura_admin_logged_in';
     const SUPABASE_TABLE = 'profiles';
 
@@ -2416,16 +2418,25 @@
     }
 
     function loadDatabase() {
-      // First load from localStorage as immediate cache
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        try {
-          profiles = JSON.parse(stored).map(normalizeProfile);
-        } catch(e) {
+      // Clear stale localStorage data if version doesn't match
+      const storedVersion = localStorage.getItem(STORAGE_VERSION_KEY);
+      if (storedVersion !== CURRENT_DATA_VERSION) {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.setItem(STORAGE_VERSION_KEY, CURRENT_DATA_VERSION);
+        profiles = [];
+        console.log('Cleared stale localStorage data (version mismatch).');
+      } else {
+        // Only load from localStorage if version matches
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          try {
+            profiles = JSON.parse(stored).map(normalizeProfile);
+          } catch(e) {
+            profiles = [];
+          }
+        } else {
           profiles = [];
         }
-      } else {
-        profiles = [];
       }
       // Then fetch fresh from Supabase in background
       fetchFromSupabase();
